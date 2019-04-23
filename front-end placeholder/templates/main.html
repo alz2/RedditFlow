@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="eng">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/user_profile.css') }}">
+ -->
+
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
+  <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,500,600,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Rochester" rel="stylesheet">
+
+  <title>RedditFlow</title>
+  <style>
+    div.gallery {
+    border: 1px solid #ccc;
+}
+
+div.gallery:hover {
+    border: 1px solid #777;
+}
+
+div.gallery img {
+    width: 100%;
+    height: auto;
+}
+
+div.desc {
+    padding: 15px;
+    text-align: center;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.responsive {
+    padding: 0 6px;
+    float: left;
+    width: 24.99999%;
+}
+
+@media only screen and (max-width: 700px) {
+    .responsive {
+        width: 49.99999%;
+        margin: 6px 0;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .responsive {
+        width: 100%;
+    }
+}
+
+.clearfix:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+body{
+  font-family: 'Raleway', sans-serif;
+  font-weight: 400;
+}
+  </style>
+</head>
+
+  <header>
+    <nav>
+      <h1>
+        <a href="/">Reddit-Flow</a>
+      </h1>
+    </nav>
+  </header>
+<body>
+ <div class="sidebar">
+      <a class="active" id="home_page" style="font-family:courier;font-size: 200%">r/AskReddit</a>
+  </div>
+  
+    <div class="navbar" id="navbar">
+      <div id="navbar-content">
+          <ul>
+              <li><a href="#posts" id="navbar-posts">Posts</a></li>
+          </ul>
+      </div>
+  </div>
+
+
+  <main id="maincontent">
+    <section id="posts-container">
+
+      <div id="posts"></div>
+    
+    </section>
+
+
+    <section>
+      <div class="filter-options" style="margin-bottom: 10px">
+        <h2>Dynamic/Static</h2>
+        <select id="DS-select" name="DS" onchange="updateDS()">
+          <option value="all">Live</option>
+          <option value="all">Past 24 hrs</option>
+        </select>
+        <label for="DS-select">DS-select</label>
+
+        <h2>Sort By</h2>
+        <select id="sortby-select" name="sortby" onchange="updateSortby()">
+          <option value="all">Popularity</option>
+          <option value="all">Date Posted</option>
+          <option value="all">Latest Commented</option>
+          <option value="all">Time</option>
+        </select>
+        <label for="sortby-select">sortby-select</label>
+        
+        <h2>Number of Posts per Line</h2>
+        <select id="numofpost-select" name="numofpost" onchange="updateNumofPosts()">
+          <option value="all">5</option>
+          <option value="all">10</option>
+          <option value="all">15</option>
+          <option value="all">20</option>
+        </select>
+        <label for="numofpost-select">numofpost-select</label>
+      </div>
+    </section>
+    
+      <!-- place hoder for Posts-->
+      <h2>Posts</h2>
+      <div id="piechart"></div>    
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      <script type="text/javascript">
+      // Load google charts
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      // Draw the chart and set the chart values
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+        ['Sentiment', 'count'],
+        ['Positive', 5],
+        ['Neutral', 3],
+        ['Negative', 2],
+      ]);
+
+        // Optional; add a title and set the width and height of the chart
+        var options = {'title':'10 AM', 'width':550, 'height':400};
+
+        // Display the chart inside the <div> element with id="piechart"
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
+      }
+      </script> 
+      <div class="desc">Slider</div>     
+      <!-- end  -->
+  </main>
+
+
+</body>
+
+
+</html>
