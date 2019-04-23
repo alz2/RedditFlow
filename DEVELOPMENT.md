@@ -10,8 +10,10 @@ Current Development Notes
 
 ## Frontend
 
-- [ ] Test client side reception of server push clients
+- [ ] Test client side reception of server push clients with `EventStream`
 
 - [ ] Provide static `.html` pages with `bootstrap` modeled after mock-up
 
 - [ ] Figure out how to display `.html` with React, or convert `.html` into React code
+
+- [ ] Update render on either reception of stream data or time slider in historical view
