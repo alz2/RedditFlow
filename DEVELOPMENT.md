@@ -22,3 +22,6 @@ Current Development Notes
 
 - [ ] Update render on either reception of stream data or time slider in historical view
 
+- [ ] Add the timeseries representation
+
+- [ ] Add info bubble when each point is clicked
