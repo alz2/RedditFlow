@@ -17,3 +17,5 @@ Current Development Notes
 - [ ] Figure out how to display `.html` with React, or convert `.html` into React code
 
 - [ ] Update render on either reception of stream data or time slider in historical view
+- [ ] Add the timeseries representation
+- [ ] Add info bubble when each point is clicked
