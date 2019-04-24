@@ -17,7 +17,7 @@ def subreddit_comment_stream(name):
     for comment in subreddit.stream.comments(skip_existing=True):
         print(comment)
         print(comment.body)
-        yield(comment.body)
+        yield("data: " + comment.body + "\n\n")
 
 @app.route('/commentStream')
 def comment_stream():
