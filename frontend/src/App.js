@@ -13,9 +13,6 @@ class App extends Component {
     }
 
     onCommentRecieved(comment) {
-        console.log(comment);
-        console.log(this);
-        console.log(this.state);
         this.setState({comments: this.state.comments.concat([comment.data])});
     }
 

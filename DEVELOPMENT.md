@@ -23,5 +23,43 @@ Current Development Notes
 - [ ] Update render on either reception of stream data or time slider in historical view
 
 - [ ] Add the timeseries representation
+    * Experimented with [dimple](http://dimplejs.org/examples_viewer.html?id=pie_bubble). I can render a pie for each post although
+      the expected data format for the pie chart is unintuitive. I would've wanted something like 
+        ```
+        {
+            postId: {
+                postDate: some_date,
+                upvotes: n_upvotes,
+                pos: n_pos,
+                neu: n_neu,
+                neg: n_neg
+            },
+        }
+
+        ```
+        but instead I have to store 3 data entries for each post, so like
+
+        ```
+            [
+                {
+                    postDate: postDate,
+                    upvotes: n_upvotes,
+                    sentimentType: "positive",
+                    sentimentCount: n_pos
+                },
+                {
+                    postDate: postDate,
+                    upvotes: n_upvotes,
+                    sentimentType: "negative",
+                    sentimentCount: n_neg
+                },
+                {
+                    postDate: postDate,
+                    upvotes: n_upvotes,
+                    sentimentType: "neutral",
+                    sentimentCount: n_neu
+                }
+            ]
+        ```
 
 - [ ] Add info bubble when each point is clicked
