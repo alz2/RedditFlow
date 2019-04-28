@@ -42,18 +42,21 @@ Current Development Notes
         ```
             [
                 {
+                    postId: postId,
                     postDate: postDate,
                     upvotes: n_upvotes,
                     sentimentType: "positive",
                     sentimentCount: n_pos
                 },
                 {
+                    postId: postId,
                     postDate: postDate,
                     upvotes: n_upvotes,
                     sentimentType: "negative",
                     sentimentCount: n_neg
                 },
                 {
+                    postId: postId,
                     postDate: postDate,
                     upvotes: n_upvotes,
                     sentimentType: "neutral",
@@ -61,5 +64,6 @@ Current Development Notes
                 }
             ]
         ```
+    * Update: played around with references so to abstract away data storage with `onCommentRecieve` and `onSubmissionRecieve`.
 
 - [ ] Add info bubble when each point is clicked

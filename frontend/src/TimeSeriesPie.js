@@ -31,10 +31,10 @@ class TimeSeriesPie extends Component {
             upvotes: 10000,
         }
 
-        this.createNewPostEntry(submission1);
-        this.createNewPostEntry(submission2);
-        this.createNewPostEntry(submission3);
-        this.createNewPostEntry(submission4);
+        this.onSubmissionRecieve(submission1);
+        this.onSubmissionRecieve(submission2);
+        this.onSubmissionRecieve(submission3);
+        this.onSubmissionRecieve(submission4);
 
         let mockComment = (id, sentimentType) => {
             return {
@@ -70,7 +70,7 @@ class TimeSeriesPie extends Component {
         this.createChart = this.createChart.bind(this);
     }
 
-    createNewPostEntry(submission) {
+    onSubmissionRecieve(submission) {
         // create three entrees for each post
         var pos = {
             postId: submission.postId,
@@ -140,7 +140,9 @@ class TimeSeriesPie extends Component {
         y.hidden = true; // hide dummy axis
 
         chart.addMeasureAxis("p", "sentimentCount"); // attribute for slice
-        chart.addLogAxis("z", "upvotes"); // pie radius
+        let z = chart.addLogAxis("z", "upvotes"); // pie radius
+        z.logBase = 2;
+
         chart.addSeries("sentimentType", dimple.plot.pie); // pie over sentimentType
         chart.draw();
     }
@@ -155,55 +157,3 @@ class TimeSeriesPie extends Component {
 }
 
 export default TimeSeriesPie;
-//let postPieData = [
-        //    {
-        //        postId: 0,
-        //        postDate: new Date(2019, 3, 27, 10, 10),
-        //        upvotes: 100,
-        //        sentimentType: "positive",
-        //        sentimentCount: 34,
-        //        ycord: 0
-        //    },
-        //    {
-        //        postId: 0,
-        //        postDate: new Date(2019, 3, 27, 10, 10),
-        //        upvotes: 100,
-        //        sentimentType: "negative",
-        //        sentimentCount: 34,
-        //        ycord: 0
-        //    },
-        //    {
-        //        postId: 0,
-        //        postDate: new Date(2019, 3, 27, 10, 10),
-        //        upvotes: 100,
-        //        sentimentType: "neutral",
-        //        sentimentCount: 33,
-        //        ycord: 0
-        //    },
-        //    {
-        //        postId: 1,
-        //        postDate: new Date(2019, 3, 27, 10, 13),
-        //        upvotes: 500,
-        //        sentimentType: "positive",
-        //        sentimentCount: 80,
-        //        ycord: 0
-        //    },
-        //    {
-        //        postId: 1,
-        //        postDate: new Date(2019, 3, 27, 10, 13),
-        //        upvotes: 500,
-        //        sentimentType: "negative",
-        //        sentimentCount: 10,
-        //        ycord: 0
-        //    },
-        //    {
-        //        postId: 1,
-        //        postDate: new Date(2019, 3, 27, 10, 13),
-        //        upvotes: 500,
-        //        sentimentType: "neutral",
-        //        sentimentCount: 10,
-        //        ycord: 0
-        //    }
-        //];
-
-
