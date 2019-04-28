@@ -79,8 +79,8 @@ writeFiles(subStats)
 import praw
 reddit = praw.Reddit(client_id = 'IMxb14tqUMTFNQ',
                     client_secret = 'uBzU-j6_R5z5vg3_h5nDp1kMSeE',
-                    username = 'cocomomo122',
-                    password = 'juhigullu',
+                    username = '********',
+                    password = '******',
                     user_agent = 'blah blah')
 
 
