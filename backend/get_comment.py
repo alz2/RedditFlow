@@ -42,7 +42,7 @@ def collectCommData(subm):
     subStats[sub_id] = subData
 
 #Subreddit to query
-sub = 'UIUC'
+sub = sys.argv[1]
 #before and after dates
 after = '1d'
 subCount = 0
@@ -68,15 +68,23 @@ print(len(data))
 
 #print(len(data))
 def writeFiles(subStats):
-    with open('sample.csv', 'w', newline='', encoding='utf-8') as file: 
+    with open('Data_full/sample_comm_' + str(sys.argv[1])+'.csv', 'w', newline='', encoding='utf-8') as file: 
         a = csv.writer(file, delimiter=',')
-        headers = ["Post ID","CommentId","Author","Score","Publish Date","Text","URL","Flair","Neutral_score","Pos_score","Neg_score"]
+        headers = ["PostID","CommentId","Author","Score","PublishDate","Text","URL","Flair","Neutral_score","Pos_score","Neg_score"]
         a.writerow(headers)
         for sub in subStats:
             a.writerow(subStats[sub][0])
 writeFiles(subStats)
 
-def get_link_det(link_l ):
+import praw
+reddit = praw.Reddit(client_id = 'IMxb14tqUMTFNQ',
+                    client_secret = 'uBzU-j6_R5z5vg3_h5nDp1kMSeE',
+                    username = 'cocomomo122',
+                    password = 'juhigullu',
+                    user_agent = 'blah blah')
+
+
+def get_link_det(link_l ,reddit):
     output= []
     for l in link_l:
         sr = reddit.submission(l)
@@ -84,11 +92,10 @@ def get_link_det(link_l ):
         
         #print(subreddit.score)
     return output
-output = get_link_det(link_id_list )
-with open('sample_link.csv', 'w', newline='', encoding='utf-8') as file: 
+output = get_link_det(link_id_list,reddit )
+with open('Data_full/sample_link_' + str(sub)+'.csv', 'w', newline='', encoding='utf-8') as file: 
     a = csv.writer(file, delimiter=',')
-    headers = ["Link ID","Name","Author","Score","Publish Date","Upvote Ratio","URL"]
+    headers = ["LinkID","Name","Author","Score","PublishDate","UpvoteRatio","URL"]
     a.writerow(headers)
     for sub in output:
         a.writerow(sub)
-
