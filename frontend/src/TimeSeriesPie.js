@@ -10,31 +10,15 @@ class TimeSeriesPie extends Component {
             postState: {}
         };
 
-        let submission1 = {
-            postId: 1,
-            postDate: new Date(2019, 3, 27, 10, 10),
-            upvotes: 100,
+        // set up initial submissions and comments if any
+        let initialSubmissions = props.submissions;
+        if (initialSubmissions) {
+            initialSubmissions.forEach(s => this.onSubmissionRecieve(s));
         }
-        let submission2 = {
-            postId: 2,
-            postDate: new Date(2019, 3, 27, 10, 13, 30),
-            upvotes: 1000,
+        let initialComments = props.comments;
+        if (initialComments) {
+            initialComments.forEach(c => this.onCommentRecieve(c));
         }
-        let submission3 = {
-            postId: 3,
-            postDate: new Date(2019, 3, 27, 10, 14),
-            upvotes: 5000,
-        }
-        let submission4 = {
-            postId: 4,
-            postDate: new Date(2019, 3, 27, 10, 17),
-            upvotes: 10000,
-        }
-
-        this.onSubmissionRecieve(submission1);
-        this.onSubmissionRecieve(submission2);
-        this.onSubmissionRecieve(submission3);
-        this.onSubmissionRecieve(submission4);
 
         let mockComment = (id, sentimentType) => {
             return {
@@ -43,41 +27,22 @@ class TimeSeriesPie extends Component {
             };
         }
 
-
-        let fillMockSubmission = function (id, bounds) {
-            let comment;
-            for (let i = 0; i < 100; i++) {
-                if (i < bounds[0]) {
-                    comment = mockComment(id, "pos");
-                } else if (i < bounds[1]) {
-                    comment = mockComment(id, "neu");
-                } else {
-                    comment = mockComment(id, "neg");
-                }
-                this.onCommentRecieve(comment);
-            }
-        }.bind(this);
-
-        fillMockSubmission(1, [33, 69]);
-        fillMockSubmission(2, [80, 90]);
-        fillMockSubmission(3, [50, 75]);
-        fillMockSubmission(4, [40, 80]);
-
-
-        console.log(this.state.postState);
-        console.log(this.state.postPieData);
-
         this.createChart = this.createChart.bind(this);
     }
 
     onSubmissionRecieve(submission) {
+        if (submission.postId in this.state.postState) { // make sure to not duplicate submissions
+            return;
+        }
+
         // create three entrees for each post
+        // start comment count at 1 because need to render pie
         var pos = {
             postId: submission.postId,
             postDate: submission.postDate,
             upvotes: submission.upvotes,
             sentimentType: "positive",
-            sentimentCount: 0,
+            sentimentCount: 1,
             ycord: 0
         };
         var neu = {
@@ -85,7 +50,7 @@ class TimeSeriesPie extends Component {
             postDate: submission.postDate,
             upvotes: submission.upvotes,
             sentimentType: "neutral",
-            sentimentCount: 0,
+            sentimentCount: 1,
             ycord: 0
         };
         var neg = {
@@ -93,7 +58,7 @@ class TimeSeriesPie extends Component {
             postDate: submission.postDate,
             upvotes: submission.upvotes,
             sentimentType: "negative",
-            sentimentCount: 0,
+            sentimentCount: 1,
             ycord: 0
         };
 
@@ -163,3 +128,22 @@ class TimeSeriesPie extends Component {
 }
 
 export default TimeSeriesPie;
+// ------------------ TESTING CODE -------------
+//let fillMockSubmission = function (id, bounds) {
+//    let comment;
+//    for (let i = 0; i < 100; i++) {
+//        if (i < bounds[0]) {
+//            comment = mockComment(id, "pos");
+//        } else if (i < bounds[1]) {
+//            comment = mockComment(id, "neu");
+//        } else {
+//            comment = mockComment(id, "neg");
+//        }
+//        this.onCommentRecieve(comment);
+//    }
+//}.bind(this);
+
+//fillMockSubmission(1, [33, 69]);
+//fillMockSubmission(2, [80, 90]);
+//fillMockSubmission(3, [50, 75]);
+//fillMockSubmission(4, [40, 80]);
