@@ -9,7 +9,7 @@ Current Development Notes
 
 - [ ] Grab Historical 1-Day Reddit Dataset for a couple of hand selected subreddits and provide endpoint for the data
 
-- [ ] Integrate sentiment classification on comments
+- [x] Integrate sentiment classification on comments (Andrew)
 
 ## Frontend
 
@@ -21,6 +21,10 @@ Current Development Notes
 - [ ] Figure out how to display `.html` with React, or convert `.html` into React code
 
 - [ ] Update render on either reception of stream data or time slider in historical view
+    * Historical done (Andrew)
+    * Stream Interfacing Done (Andrew)
+        * Historical data are converted to streams and then sent to react components
+        * Yet to tests streams
 
 - [x] Add the timeseries representation (Andrew)
     * Experimented with [dimple](http://dimplejs.org/examples_viewer.html?id=pie_bubble). I can render a pie for each post although
@@ -67,4 +71,6 @@ Current Development Notes
     * Update: played around with references so to abstract away data storage with `onCommentRecieve` and `onSubmissionRecieve`.
     * `RedditDayFlow` class abstracts `TimeSeriesPie` given number of rows and dataset.
 
-- [ ] Add info bubble when each point is clicked
+- [x] Add info bubble when each point is clicked (Andrew)
+    * click redirects to post
+    * hover displays some information about post
