@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import Stream from 'stream';
 import d3 from 'd3';
-import TimeSeriesPie from './TimeSeriesPie.js';
 import RedditDayFlow from './RedditDayFlow.js';
 import logo from './logo.svg';
 import './App.css';
@@ -46,10 +46,25 @@ class App extends Component {
             d3.csv(commentFile, commentData => {
                 submissionData.map(s => s.postDate *= 1000) ; // convert to millis
                 commentData.map(c => c.sentimentType = determineLabel(c));
+
+                // create streams from arrays
+                const submissionStream = new Stream.Readable({objectMode: true});
+                submissionStream._read = () => {};
+                submissionData.forEach(item => submissionStream.push(item));
+                submissionStream.push(null);
+
+                const commentStream = new Stream.Readable({objectMode: true});
+                commentStream._read = () => {};
+                commentData.forEach(item => commentStream.push(item));
+                commentStream.push(null);
+
                 this.setState({
                     commentData: commentData,
-                    submissionData: submissionData
+                    submissionData: submissionData,
+                    submissionStream: submissionStream,
+                    commentStream: commentStream
                 });
+
             });
         });
     }
@@ -59,22 +74,22 @@ class App extends Component {
             <>
             <h1> Testing Streaming Comments </h1>
             <div>
-            {this.state.commentData && this.state.submissionData ? 
-                    <RedditDayFlow
-                        submissions={this.state.submissionData}
-                        comments={this.state.commentData}
-                        nRows={4}
-                        date={new Date(2019, 3, 27)}
+                {this.state.commentData && this.state.submissionData ? 
+                        <RedditDayFlow
+                            submissions={this.state.submissionStream}
+                            comments={this.state.commentStream}
+                            nRows={4}
+                            date={new Date(2019, 3, 27)}
                         />
-                    :
-                    <p> Loading... </p>
-            }
-            </div>
+                        :
+                        <p> Loading... </p>
+                }
+                    </div>
             <div>
                 {this.state.comments.map(c => (
                     <p>{c}</p>
                 ))}
-            </div>
+                </div>
             </>
         )
     }
@@ -82,25 +97,3 @@ class App extends Component {
 }
 
 export default App;
-
-//let submission1 = {
-//    postId: 1,
-//    postDate: new Date(2019, 3, 27, 10, 10),
-//    upvotes: 100,
-//}
-//let submission2 = {
-//    postId: 2,
-//    postDate: new Date(2019, 3, 27, 10, 13, 30),
-//    upvotes: 1000,
-//}
-//let submission3 = {
-//    postId: 3,
-//    postDate: new Date(2019, 3, 27, 10, 14),
-//    upvotes: 5000,
-//}
-//let submission4 = {
-//    postId: 4,
-//    postDate: new Date(2019, 3, 27, 11, 17),
-//    upvotes: 10000,
-//}
-//let initialSubmissions = [submission1, submission2, submission3, submission4];

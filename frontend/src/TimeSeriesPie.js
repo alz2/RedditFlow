@@ -21,16 +21,17 @@ class TimeSeriesPie extends Component {
         // set up initial submissions and comments if any
         let initialSubmissions = props.submissions;
         if (initialSubmissions) {
-            initialSubmissions.forEach(s => this.onSubmissionRecieve(s));
+            //initialSubmissions.forEach(s => this.onSubmissionRecieve(s));
+            initialSubmissions.on('data', s => this.onSubmissionRecieve(s));
         }
         let initialComments = props.comments;
         if (initialComments) {
-            initialComments.forEach(c => this.onCommentRecieve(c));
+            //initialComments.forEach(c => this.onCommentRecieve(c));
+            initialComments.on('data', c => this.onCommentRecieve(c));
         }
     }
 
     onSubmissionRecieve(submission) {
-
         if (submission.postId in this.state.postState) { // make sure to not duplicate submissions
             return;
         }
@@ -83,6 +84,8 @@ class TimeSeriesPie extends Component {
             postAuthor: submission.postAuthor,
             upvotes: submission.score
         }
+
+        this.forceUpdate();
     }
 
     onCommentRecieve(comment) {
@@ -91,6 +94,7 @@ class TimeSeriesPie extends Component {
             return;
         }
         this.state.postState[postId][comment.sentimentType].sentimentCount += 1;
+        this.forceUpdate();
     }
 
     componentDidMount() {
@@ -117,9 +121,9 @@ class TimeSeriesPie extends Component {
 
         let chart = new dimple.chart(svg, this.state.postPieData);
         chart.defaultColors = [
-            new dimple.color("#2ecc71", "#27ae60", 0.6), // green
+            new dimple.color("#e74c3c", "#c0392b", 0.6), // red
             new dimple.color("#f1c40f", "#f39c12", 0.6), // yellow
-            new dimple.color("#e74c3c", "#c0392b", 0.6) // red
+            new dimple.color("#2ecc71", "#27ae60", 0.6), // green
         ];
 
         let x = chart.addTimeAxis("x", "postDate");

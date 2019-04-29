@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import dimple from 'dimple-js/dist/dimple.latest.js';
-import * as d3 from 'd3';
 import { startOfDay } from 'date-fns';
+import Stream from 'stream';
 import './App.css';
 
 import TimeSeriesPie from './TimeSeriesPie.js';
@@ -17,49 +16,57 @@ class RedditDayFlow extends Component {
 
         // only keep data of the day
         let commentData = props.comments;
-        let submissionData = props.submissions.filter(s => (s.postDate >= dayBegin && s.postDate < dayEnd));
+        //let submissionData = props.submissions.filter(s => (s.postDate >= dayBegin && s.postDate < dayEnd));
 
-        // set up functions determine whether a entry is in a row
+        // set up row dates to determine whether a entry is in a row
         let millisRow = millisDay / props.nRows;
-        let rowTimes = [];
-        let rowIndicatorFns = [];
+        let rowTimes = []; // row start and end times
+        let rowData = {}; // data corresponding with rows
         for (let i = 0; i < props.nRows; i++) {
             let startRow = dayBegin + i * millisRow;
             let endRow = dayBegin + (i+1) * millisRow;
             console.log("row " + i + " is between " + new Date(startRow) + " and " + new Date(endRow));
-            rowIndicatorFns.push(entry => {
-                return (entry.postDate >= startRow && entry.postDate < endRow)
-            });
             rowTimes.push({
                 beginTime: startRow,
                 endTime: endRow
             });
-        }
 
-        // bucket data into rows
-        let rowData = {};
-        for (let i = 0; i < props.nRows; i++) {
+            // create rowData entry
+            let rowSubmissionStream = new Stream.Readable({objectMode: true})
+            rowSubmissionStream._read = () => {};
+            let rowCommentStream = new Stream.Readable({objectMode: true})
+            rowCommentStream._read = () => {};
+
             rowData[i] = {
-                submissions: [],
-                comments: commentData // TODO fix this
+                submissions: rowSubmissionStream,
+                comments: rowCommentStream
             };
         }
 
-        submissionData.forEach(s => {
-            for (let i = 0; i < props.nRows; i++) {
-                if (rowIndicatorFns[i](s)) {
-                    rowData[i].submissions.push(s);
-                    break;
-                }
-            }
-        });
-
         this.state = {
-            day: dayBegin,
+            dayBegin: dayBegin,
+            dayEnd: dayEnd,
             nRows: props.nRows,
             rowData: rowData,
             rowTimes: rowTimes,
             currentSubmissionHoverInfo: null
+        }
+
+        // set stream handlers
+        props.submissions.on('data', s => this.onSubmissionRecieve(s));
+        props.comments.on('data', c => this.onCommentRecieve(c));
+    }
+
+    onSubmissionRecieve(s) {
+        // determine whether to keep submission
+        if (s.postDate < this.state.dayBegin || s.postDate >= this.state.dayEnd) {
+            return; 
+        }
+        for (let i = 0; i < this.state.nRows; i++) {
+            if (s.postDate >= this.state.rowTimes[i].beginTime && s.postDate < this.state.rowTimes[i].endTime) {
+                this.state.rowData[i].submissions.push(s);
+                break;
+            }
         }
     }
 
@@ -71,6 +78,13 @@ class RedditDayFlow extends Component {
             postAuthor: postAuthor
         }
         this.setState({currentSubmissionHoverInfo: submissionInfo})
+    }
+
+    onCommentRecieve(c) {
+        // TODO: inefficient implementation (leaving lower props to filter)
+        for (let i = 0; i < this.state.nRows; i++) {
+            this.state.rowData[i].comments.push(c);
+        }
     }
 
     createTimeSeriesPieRows = () => {
