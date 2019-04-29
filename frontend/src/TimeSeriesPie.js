@@ -5,9 +5,13 @@ import * as d3 from 'd3';
 class TimeSeriesPie extends Component {
     constructor(props) {
         super(props);
+        let beginTime = props.beginTime;
+        let endTime = props.endTime;
         this.state = {
             postPieData: [],
-            postState: {}
+            postState: {},
+            beginTime: beginTime,
+            endTime, endTime
         };
 
         // set up initial submissions and comments if any
@@ -103,6 +107,12 @@ class TimeSeriesPie extends Component {
         let x = chart.addTimeAxis("x", "postDate");
         x.dateParseFormat = null;
         x.tickFormat = "%H:%M %p";
+        if (this.state.beginTime) {
+            x.overrideMin = this.state.beginTime;
+        }
+        if (this.state.endTime) {
+            x.overrideMax = this.state.endTime;
+        }
 
         let y = chart.addMeasureAxis("y", "ycord");
         y.hidden = true; // hide dummy axis

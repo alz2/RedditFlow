@@ -20,6 +20,7 @@ class RedditDayFlow extends Component {
 
         // set up functions determine whether a entry is in a row
         let millisRow = millisDay / props.nRows;
+        let rowTimes = [];
         let rowIndicatorFns = [];
         for (let i = 0; i < props.nRows; i++) {
             let startRow = dayBegin + i * millisRow;
@@ -27,6 +28,10 @@ class RedditDayFlow extends Component {
             console.log("row " + i + " is between " + new Date(startRow) + " and " + new Date(endRow));
             rowIndicatorFns.push(entry => {
                 return (entry.postDate >= startRow && entry.postDate < endRow)
+            });
+            rowTimes.push({
+                beginTime: startRow,
+                endTime: endRow
             });
         }
 
@@ -51,19 +56,21 @@ class RedditDayFlow extends Component {
         this.state = {
             day: dayBegin,
             nRows: props.nRows,
-            rowData: rowData
+            rowData: rowData,
+            rowTimes: rowTimes
         }
     }
 
     createTimeSeriesPieRows = () => {
         let rows = [];
         for (let i = 0; i < this.state.nRows; i++) {
-            if (this.state.rowData[i].submissions.length) {
-                rows.push(
-                    <TimeSeriesPie
-                        submissions={this.state.rowData[i].submissions} 
-                        comments={this.state.rowData[i].comments}/>);
-            }
+            rows.push(
+                <TimeSeriesPie
+                    submissions={this.state.rowData[i].submissions} 
+                    comments={this.state.rowData[i].comments}
+                    beginTime={this.state.rowTimes[i].beginTime}
+                    endTime={this.state.rowTimes[i].endTime}
+                />);
         }
         return rows;
     }
