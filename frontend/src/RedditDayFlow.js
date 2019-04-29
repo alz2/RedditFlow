@@ -57,8 +57,19 @@ class RedditDayFlow extends Component {
             day: dayBegin,
             nRows: props.nRows,
             rowData: rowData,
-            rowTimes: rowTimes
+            rowTimes: rowTimes,
+            currentSubmissionHoverInfo: null
         }
+    }
+
+    onSubmissionMouseOver(dimpleEv, postTitle, postAuthor) {
+        let submissionInfo = {
+            postDate: dimpleEv.xValue,
+            postTitle: postTitle,
+            upvotes: dimpleEv.zValue,
+            postAuthor: postAuthor
+        }
+        this.setState({currentSubmissionHoverInfo: submissionInfo})
     }
 
     createTimeSeriesPieRows = () => {
@@ -70,6 +81,7 @@ class RedditDayFlow extends Component {
                     comments={this.state.rowData[i].comments}
                     beginTime={this.state.rowTimes[i].beginTime}
                     endTime={this.state.rowTimes[i].endTime}
+                    onMouseOver={this.onSubmissionMouseOver.bind(this)}
                 />);
         }
         return rows;
@@ -77,9 +89,20 @@ class RedditDayFlow extends Component {
 
     render() {
         return (
+            <>
             <div> 
                 {this.createTimeSeriesPieRows()}
             </div>
+            <div>
+                {this.state.currentSubmissionHoverInfo &&
+                    <>
+                        <h1>{this.state.currentSubmissionHoverInfo.postTitle}</h1>
+                        <h4>{this.state.currentSubmissionHoverInfo.postAuthor}</h4>
+                        <h4>{this.state.currentSubmissionHoverInfo.upvotes}</h4>
+                    </>
+                }
+            </div>
+            </>
         )
     }
 

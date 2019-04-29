@@ -5,14 +5,17 @@ import * as d3 from 'd3';
 class TimeSeriesPie extends Component {
     constructor(props) {
         super(props);
+        this.createChart = this.createChart.bind(this);
         let beginTime = props.beginTime;
         let endTime = props.endTime;
         this.state = {
-            postPieData: [],
-            postState: {},
-            beginTime: beginTime,
-            endTime: endTime,
-            postTimeToUrl: {}
+            postPieData: [], // Data in format for pie
+            postState: {}, // References for easy updates
+            beginTime: beginTime, // start time of this row
+            endTime: endTime, // end time of this row
+            postTimeToInfo: {},
+            onMouseOver: props.onMouseOver, // target div to display on hover
+            chart: null
         };
 
         // set up initial submissions and comments if any
@@ -24,9 +27,6 @@ class TimeSeriesPie extends Component {
         if (initialComments) {
             initialComments.forEach(c => this.onCommentRecieve(c));
         }
-
-        this.createChart = this.createChart.bind(this);
-        console.log(this.state.postTimeToUrl);
     }
 
     onSubmissionRecieve(submission) {
@@ -35,6 +35,7 @@ class TimeSeriesPie extends Component {
             return;
         }
 
+        // possibly scale upvotes to change bubble sizes better?
         let upvoteScaleFactor = 1;
         let scoreScaled = submission.score * upvoteScaleFactor; 
 
@@ -75,8 +76,13 @@ class TimeSeriesPie extends Component {
         this.state.postPieData.push(neu);
         this.state.postPieData.push(neg);
 
-        // update url map
-        this.state.postTimeToUrl[submission.postDate] = submission.URL;
+        // update time to URL Map
+        this.state.postTimeToInfo[submission.postDate] = {
+            URL: submission.URL,
+            postTitle: submission.postTitle,
+            postAuthor: submission.postAuthor,
+            upvotes: submission.score
+        }
     }
 
     onCommentRecieve(comment) {
@@ -88,10 +94,16 @@ class TimeSeriesPie extends Component {
     }
 
     componentDidMount() {
-        this.createChart();
+        if (!this.state.chart) {
+            this.state.chart = this.createChart();
+        } 
+        this.state.chart.draw();
     }
     componentDidUpdate() {
-        this.createChart();
+        if (!this.state.chart) {
+            this.state.chart = this.createChart();
+        } 
+        this.state.chart.draw();
     }
 
     createChart() {
@@ -127,16 +139,29 @@ class TimeSeriesPie extends Component {
         let z = chart.addLogAxis("z", "upvotes"); // pie radius
         z.logBase = 2;
 
-        let pie = chart.addSeries("sentimentType", dimple.plot.pie); // pie over sentimentType
-        pie.radius = 50;
+        let pies = chart.addSeries("sentimentType", dimple.plot.pie); // pie over sentimentType
+        pies.radius = 50;
 
-        pie.addEventHandler("click", (ev) => {
+        pies.addEventHandler("click", (ev) => {
             let postTime = ev.xValue.getTime(),
-                postUrl = this.state.postTimeToUrl[postTime];
+                postUrl = this.state.postTimeToInfo[postTime].URL;
             window.open(postUrl, "_blank");
         }) ;
 
-        chart.draw();
+        // Override the standard tooltip behaviour
+        let onMouseOver = this.state.onMouseOver
+        if (onMouseOver) {
+            let postTimeToInfo = this.state.postTimeToInfo;
+            pies.addEventHandler("mouseover", function (e){
+                let postTime = e.xValue.getTime(),
+                    postTitle =  postTimeToInfo[postTime].postTitle,
+                    postAuthor = postTimeToInfo[postTime].postAuthor
+                onMouseOver(e, postTitle, postAuthor);
+            });
+        }
+
+        //chart.draw();
+        return chart;
     }
 
     render() {

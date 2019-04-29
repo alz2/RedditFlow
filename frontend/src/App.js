@@ -52,7 +52,6 @@ class App extends Component {
                 });
             });
         });
-
     }
 
     render() {
@@ -65,7 +64,8 @@ class App extends Component {
                         submissions={this.state.submissionData}
                         comments={this.state.commentData}
                         nRows={4}
-                        date={new Date(2019, 3, 26)}/>
+                        date={new Date(2019, 3, 27)}
+                        />
                     :
                     <p> Loading... </p>
             }
