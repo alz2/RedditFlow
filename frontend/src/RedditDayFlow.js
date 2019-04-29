@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import dimple from 'dimple-js/dist/dimple.latest.js';
 import * as d3 from 'd3';
 import { startOfDay } from 'date-fns';
+import './App.css';
 
 import TimeSeriesPie from './TimeSeriesPie.js';
 
@@ -90,17 +91,19 @@ class RedditDayFlow extends Component {
     render() {
         return (
             <>
-            <div> 
-                {this.createTimeSeriesPieRows()}
-            </div>
-            <div>
-                {this.state.currentSubmissionHoverInfo &&
-                    <>
-                        <h1>{this.state.currentSubmissionHoverInfo.postTitle}</h1>
-                        <h4>{this.state.currentSubmissionHoverInfo.postAuthor}</h4>
-                        <h4>{this.state.currentSubmissionHoverInfo.upvotes}</h4>
-                    </>
-                }
+            <div style={{display: "flex"}}>
+                <div className="RedditDayFlow_chart"> 
+                    {this.createTimeSeriesPieRows()}
+                </div>
+                <div className="RedditDayFlow_hover">
+                    {this.state.currentSubmissionHoverInfo &&
+                        <>
+                            <h1>{this.state.currentSubmissionHoverInfo.postTitle}</h1>
+                            <h4>{this.state.currentSubmissionHoverInfo.postAuthor}</h4>
+                            <h4>{this.state.currentSubmissionHoverInfo.upvotes}</h4>
+                        </>
+                    }
+                </div>
             </div>
             </>
         )
