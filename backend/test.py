@@ -17,7 +17,7 @@ reddit = praw.Reddit(client_id=os.environ['client_id'],
 
 def subreddit_comment_stream(name):
     # postId,commentId,author,score,postDate,text,URL,flair,neutralScore,posScore,negScore
-    subreddit = reddit.subreddit('all')
+    subreddit = reddit.subreddit(name)
     for comment in subreddit.stream.comments(skip_existing=True):
         ss = sid.polarity_scores(comment.body)
         print(comment.body)
@@ -35,9 +35,31 @@ def subreddit_comment_stream(name):
                 }
         yield("data: " + json.dumps(res) + "\n\n")
 
+def subreddit_submission_stream(name):
+    # postId,postTitle,postAuthor,score,postDate,upvoteRatio,URL
+    subreddit = reddit.subreddit(name)
+    for submission in subreddit.stream.submissions(skip_existing=True):
+        res = {
+                "postId": submission.id,
+                "postTitle": submission.title,
+                "postAuthor": submission.author.name,
+                "score": submission.score,
+                "postDate": submission.created_utc,
+                "upvoteRatio": submission.upvote_ratio,
+                "URL": submission.url
+                }
+        yield("data: " + json.dumps(res) + "\n\n")
+
 @app.route('/commentStream')
 def comment_stream():
-    return flask.Response(subreddit_comment_stream('iama'),
+    r = request.args['r']
+    return flask.Response(subreddit_comment_stream(r),
+                          mimetype="text/event-stream")
+
+@app.route('/submissionStream')
+def submission_stream():
+    r = request.args['r']
+    return flask.Response(subreddit_submission_stream(r),
                           mimetype="text/event-stream")
 
 if __name__ == "__main__":
