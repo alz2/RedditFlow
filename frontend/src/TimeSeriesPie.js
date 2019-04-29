@@ -11,7 +11,8 @@ class TimeSeriesPie extends Component {
             postPieData: [],
             postState: {},
             beginTime: beginTime,
-            endTime, endTime
+            endTime: endTime,
+            postTimeToUrl: {}
         };
 
         // set up initial submissions and comments if any
@@ -24,23 +25,25 @@ class TimeSeriesPie extends Component {
             initialComments.forEach(c => this.onCommentRecieve(c));
         }
 
-        console.log(this.state.postState);
-
-
         this.createChart = this.createChart.bind(this);
+        console.log(this.state.postTimeToUrl);
     }
 
     onSubmissionRecieve(submission) {
+
         if (submission.postId in this.state.postState) { // make sure to not duplicate submissions
             return;
         }
+
+        let upvoteScaleFactor = 1;
+        let scoreScaled = submission.score * upvoteScaleFactor; 
 
         // create three entrees for each post
         // start comment count at 1 because need to render pie
         var pos = {
             postId: submission.postId,
             postDate: submission.postDate,
-            upvotes: submission.score,
+            upvotes: scoreScaled,
             sentimentType: "positive",
             sentimentCount: 1,
             ycord: 0
@@ -48,7 +51,7 @@ class TimeSeriesPie extends Component {
         var neu = {
             postId: submission.postId,
             postDate: submission.postDate,
-            upvotes: submission.score,
+            upvotes: scoreScaled,
             sentimentType: "neutral",
             sentimentCount: 1,
             ycord: 0
@@ -56,7 +59,7 @@ class TimeSeriesPie extends Component {
         var neg = {
             postId: submission.postId,
             postDate: submission.postDate,
-            upvotes: submission.score,
+            upvotes: scoreScaled,
             sentimentType: "negative",
             sentimentCount: 1,
             ycord: 0
@@ -71,6 +74,9 @@ class TimeSeriesPie extends Component {
         this.state.postPieData.push(pos);
         this.state.postPieData.push(neu);
         this.state.postPieData.push(neg);
+
+        // update url map
+        this.state.postTimeToUrl[submission.postDate] = submission.URL;
     }
 
     onCommentRecieve(comment) {
@@ -90,7 +96,7 @@ class TimeSeriesPie extends Component {
 
     createChart() {
         let svgWidth = "100%";
-        let svgHeight = 400;
+        let svgHeight = 500;
         let svg = d3.select(this.node)
             .append("svg")
             .attr("width", svgWidth)
@@ -121,7 +127,15 @@ class TimeSeriesPie extends Component {
         let z = chart.addLogAxis("z", "upvotes"); // pie radius
         z.logBase = 2;
 
-        chart.addSeries("sentimentType", dimple.plot.pie); // pie over sentimentType
+        let pie = chart.addSeries("sentimentType", dimple.plot.pie); // pie over sentimentType
+        pie.radius = 50;
+
+        pie.addEventHandler("click", (ev) => {
+            let postTime = ev.xValue.getTime(),
+                postUrl = this.state.postTimeToUrl[postTime];
+            window.open(postUrl, "_blank");
+        }) ;
+
         chart.draw();
     }
 
