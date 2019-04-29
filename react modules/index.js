@@ -86,41 +86,45 @@ class PostsPerLine extends React.Component {
         <label>
           Select # of Posts per line : 
           <ul>
-        <li>
+        
           <label>
             <input
               type="radio"
               value="20"
-              checked={this.state.size === "20"}
+              checked={this.state.value === "20"}
               onChange={this.handleChange}
             />
             20
           </label>
-        </li>
+  
+
+  <div >
+  <input type="radio" value="15" checked={this.state.value === "15"} onChange={this.handleChange} />
+  <span class="wrappable">one radio per row version, up to you</span>
+  </div>
         
-        <li>
           <label>
             <input
               type="radio"
               value="10"
-              checked={this.state.size === "10"}
+              checked={this.state.value === "10"}
               onChange={this.handleChange}
             />
-            10
+            10    
           </label>
-        </li>
+       
 
-        <li>
+       
           <label>
             <input
               type="radio"
               value="5"
-              checked={this.state.size === "5"}
+              checked={this.state.value === "5"}
               onChange={this.handleChange}
             />
             5
           </label>
-        </li>
+       
       </ul>
         </label>
         <input type="submit" value="Make your choice" />
