@@ -49,3 +49,11 @@ body {
   font-family: 'Raleway', sans-serif;
   font-weight: 400;  
 }
+
+label {
+    white-space:nowrap;
+}
+
+.wrappable {
+    white-space:normal;
+}
