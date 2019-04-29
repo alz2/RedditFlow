@@ -22,7 +22,7 @@ Current Development Notes
 
 - [ ] Update render on either reception of stream data or time slider in historical view
 
-- [ ] Add the timeseries representation
+- [x] Add the timeseries representation (Andrew)
     * Experimented with [dimple](http://dimplejs.org/examples_viewer.html?id=pie_bubble). I can render a pie for each post although
       the expected data format for the pie chart is unintuitive. I would've wanted something like 
         ```
@@ -65,5 +65,6 @@ Current Development Notes
             ]
         ```
     * Update: played around with references so to abstract away data storage with `onCommentRecieve` and `onSubmissionRecieve`.
+    * `RedditDayFlow` class abstracts `TimeSeriesPie` given number of rows and dataset.
 
 - [ ] Add info bubble when each point is clicked
