@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import d3 from 'd3';
 import TimeSeriesPie from './TimeSeriesPie.js';
+import RedditDayFlow from './RedditDayFlow.js';
 import logo from './logo.svg';
 import './App.css';
 
@@ -43,13 +44,12 @@ class App extends Component {
         };
         d3.csv(submissionFile, submissionData => {
             d3.csv(commentFile, commentData => {
-                submissionData.map(s => s.postDate *= 100) ; // convert to millis
+                submissionData.map(s => s.postDate *= 1000) ; // convert to millis
                 commentData.map(c => c.sentimentType = determineLabel(c));
                 this.setState({
                     commentData: commentData,
                     submissionData: submissionData
                 });
-                console.log(commentData);
             });
         });
 
@@ -61,9 +61,12 @@ class App extends Component {
             <h1> Testing Streaming Comments </h1>
             <div>
             {this.state.commentData && this.state.submissionData ? 
-                    <TimeSeriesPie 
+                    <RedditDayFlow
                         submissions={this.state.submissionData}
-                        comments={this.state.commentData}/> :
+                        comments={this.state.commentData}
+                        nRows={4}
+                        date={new Date(2019, 3, 26)}/>
+                    :
                     <p> Loading... </p>
             }
             </div>

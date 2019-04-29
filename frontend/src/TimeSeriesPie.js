@@ -101,7 +101,7 @@ class TimeSeriesPie extends Component {
         ];
 
         let x = chart.addTimeAxis("x", "postDate");
-        //x.dateParseFormat = null;
+        x.dateParseFormat = null;
         x.tickFormat = "%H:%M %p";
 
         let y = chart.addMeasureAxis("y", "ycord");
