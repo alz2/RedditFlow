@@ -20,12 +20,8 @@ class TimeSeriesPie extends Component {
             initialComments.forEach(c => this.onCommentRecieve(c));
         }
 
-        let mockComment = (id, sentimentType) => {
-            return {
-                postId: id,
-                sentimentType: sentimentType
-            };
-        }
+        console.log(this.state.postState);
+
 
         this.createChart = this.createChart.bind(this);
     }
@@ -40,7 +36,7 @@ class TimeSeriesPie extends Component {
         var pos = {
             postId: submission.postId,
             postDate: submission.postDate,
-            upvotes: submission.upvotes,
+            upvotes: submission.score,
             sentimentType: "positive",
             sentimentCount: 1,
             ycord: 0
@@ -48,7 +44,7 @@ class TimeSeriesPie extends Component {
         var neu = {
             postId: submission.postId,
             postDate: submission.postDate,
-            upvotes: submission.upvotes,
+            upvotes: submission.score,
             sentimentType: "neutral",
             sentimentCount: 1,
             ycord: 0
@@ -56,7 +52,7 @@ class TimeSeriesPie extends Component {
         var neg = {
             postId: submission.postId,
             postDate: submission.postDate,
-            upvotes: submission.upvotes,
+            upvotes: submission.score,
             sentimentType: "negative",
             sentimentCount: 1,
             ycord: 0
@@ -64,9 +60,9 @@ class TimeSeriesPie extends Component {
 
         // put reference to pos,neu,neg to both postState and postPieData
         this.state.postState[submission.postId] = {
-            pos: pos,
-            neu: neu,
-            neg, neg
+            positive: pos,
+            neutral: neu,
+            negative: neg
         };
         this.state.postPieData.push(pos);
         this.state.postPieData.push(neu);
@@ -105,6 +101,7 @@ class TimeSeriesPie extends Component {
         ];
 
         let x = chart.addTimeAxis("x", "postDate");
+        //x.dateParseFormat = null;
         x.tickFormat = "%H:%M %p";
 
         let y = chart.addMeasureAxis("y", "ycord");
@@ -129,15 +126,21 @@ class TimeSeriesPie extends Component {
 
 export default TimeSeriesPie;
 // ------------------ TESTING CODE -------------
+//let mockComment = (id, sentimentType) => {
+//    return {
+//        postId: id,
+//        sentimentType: sentimentType
+//    };
+//}
 //let fillMockSubmission = function (id, bounds) {
 //    let comment;
 //    for (let i = 0; i < 100; i++) {
 //        if (i < bounds[0]) {
-//            comment = mockComment(id, "pos");
+//            comment = mockComment(id, "positive");
 //        } else if (i < bounds[1]) {
-//            comment = mockComment(id, "neu");
+//            comment = mockComment(id, "neutral");
 //        } else {
-//            comment = mockComment(id, "neg");
+//            comment = mockComment(id, "negative");
 //        }
 //        this.onCommentRecieve(comment);
 //    }
