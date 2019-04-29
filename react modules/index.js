@@ -37,7 +37,7 @@ class SortBy extends React.Component {
   handleChange(event) {
     this.setState({value: event.target.value});
   }
-
+ 
   handleSubmit(event) {
     alert('You want to sort posts by: ' + this.state.value);
     event.preventDefault();
