@@ -3,8 +3,9 @@ import Stream from 'stream';
 import d3 from 'd3';
 import RedditDayFlow from './RedditDayFlow.js';
 import logo from './logo.svg';
-import './App.css';
 import { ButtonToolbar, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
+import './App.css';
+import "./btn.css";
 
 let key = 0; // global key for react updates :(
 
@@ -169,8 +170,8 @@ class App extends Component {
             <div className="d-flex justify-content-center">
                 <ButtonToolbar>
                     <ToggleButtonGroup type="radio" name="options" defaultValue={0} onChange={this.toggleLive}>
-                        <ToggleButton variant="success" value={0}>Historical Data</ToggleButton>
-                        <ToggleButton variant="danger" value={1}>Live</ToggleButton>
+                        <ToggleButton className="Btn-H-BG" value={0}>Historical Data</ToggleButton>
+                        <ToggleButton className="Btn-L-BG" value={1}>Live</ToggleButton>
                     </ToggleButtonGroup>
                 </ButtonToolbar>
             </div>

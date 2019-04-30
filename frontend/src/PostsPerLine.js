@@ -4,6 +4,7 @@ import dimple from 'dimple-js/dist/dimple.latest.js';
 import * as d3 from 'd3';
 import { startOfDay } from 'date-fns';
 import './App.css';
+import "./btn.css";
 
 import TimeSeriesPie from './TimeSeriesPie.js';
 
@@ -68,7 +69,7 @@ class PostsPerLine extends React.Component {
        
       </ul>
         </label>
-        <Button variant="warning" onClick={this.handleSubmit}>Make your choice</Button>
+        <Button className="Btn-Y-BG" onClick={this.handleSubmit}>Make your choice</Button>
       </form>
     );
   }
