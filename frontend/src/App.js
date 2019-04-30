@@ -6,6 +6,8 @@ import logo from './logo.svg';
 import './App.css';
 import { ButtonToolbar, ToggleButtonGroup, ToggleButton }from 'react-bootstrap';
 
+let key = 0; // global key for react updates :(
+
 class App extends Component {
     constructor(props) {
         super(props);
@@ -68,7 +70,7 @@ class App extends Component {
         });
     }
 
-    createCommentStream(subredditName) {
+    initCommentStream(subredditName) {
         let es = new EventSource(this.state.backendUrl + "commentStream?r="+subredditName);
         const commentStream = new Stream.Readable({objectMode: true});
         commentStream._read = () => {};
@@ -77,36 +79,39 @@ class App extends Component {
             json.sentimentType = this.determineLabel(json);
             commentStream.push(json);
         };
-        return commentStream;
+        this.setState({
+            commentStream: commentStream,
+            commentEventSource: es
+        });
     }
 
-    createSubmissionStream(subredditName) {
+    initSubmissionStream(subredditName) {
         let es = new EventSource(this.state.backendUrl + "submissionStream?r="+subredditName);
         const submissionStream = new Stream.Readable({objectMode: true});
         submissionStream._read = () => {};
         es.onmessage = item => submissionStream.push(JSON.parse(item.data));
-        return submissionStream;
+        this.setState({
+            submissionStream: submissionStream,
+            submissionEventSource: es
+        });
     }
 
     cleanupStreams() {
-        if (this.state.streamingData) {
-            this.state.commentStream.close();
-            this.state.submissionStream.close();
-        }
+        // close event sources
+        this.state.commentEventSource.close();
+        this.state.submissionEventSource.close();
+        // close streams
+        this.state.submissionStream.push(null);
+        this.state.commentStream.push(null);
     }
 
     toggleLive(toggleValue, event) {
         let streaming = !!toggleValue;
         if (streaming) { // create streams
-            this.setState({
-                streaming: streaming,
-                commentStream: this.createCommentStream("AskReddit"),
-                submissionStream: this.createSubmissionStream("AskReddit")
-            }, () => {
-                this.forceUpdate();
-            });
+            this.initCommentStream("AskReddit");
+            this.initSubmissionStream("AskReddit");
+            this.setState({streaming: streaming});
         } else { // close existing streams
-            console.log("shit");
             this.setState({streaming: streaming});
             this.cleanupStreams();
             this.loadHistoricalData();
@@ -114,6 +119,7 @@ class App extends Component {
     }
 
     render() {
+        key += 1
         return (
             <>
             <h1> Reddit Flow </h1>
@@ -122,7 +128,7 @@ class App extends Component {
                     <>
                     <h4>{this.state.streaming ? "Live Data": "Historical Data"} </h4>
                     <RedditDayFlow
-                        key={this.state.streaming}
+                        key={key}
                         submissions={this.state.submissionStream}
                         comments={this.state.commentStream}
                         nRows={4}
