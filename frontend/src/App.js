@@ -6,6 +6,8 @@ import logo from './logo.svg';
 import { ButtonToolbar, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 import './App.css';
 import "./btn.css";
+import Card from 'react-bootstrap/Card';
+import Nav from 'react-bootstrap/Nav'
 
 let key = 0; // global key for react updates :(
 
@@ -227,6 +229,60 @@ class App extends Component {
                         <p> Loading... </p>
                 }
                     </div>
+                    <Card>
+                  <Card.Header as="h5">Methodology</Card.Header>
+                  <Card.Body>
+                    <Card.Title>Live Section: </Card.Title>
+                    <Card.Text>
+                    <ul> 
+                  <li> We use Reddit API to generate a live version of the app which is aimed at getting the latest comments  in a subreddit and displaying according to time per post. </li>
+                  <li> Each of the pie charts refer to a post which was created in the given duration. The size of the piechart refers to the number of upvotes for that thread on Reddit.</li>
+                  <li> As the comments are live streamed it gets processed for the sentiment classification. </li>
+                  </ul>
+                    </Card.Text>
+                    <Card.Title> Historical Data Section: </Card.Title>
+                    <Card.Text>
+                    <ul> 
+                      <li> In this section we present historical (past 1/2  days) of data  for different subreddits. </li>
+                      <li> This presents an overiews of how active the users have been on the subreddit</li>
+                    </ul>
+                    </Card.Text>
+
+                    <Card.Title>  Analysis and Trends: </Card.Title>
+                    <Card.Text>
+                    <ul> 
+
+                      <li> We take an example of set of subreddits which are of universities with largest subscriber count. </li>
+                      <li> We see how much activities there is in larger universities, especially in universities in campustown.</li>
+                      <li> UIUC is one of the biggest universities which is not located in a city, as a result all the local community chatter happens on the university reddit </li>
+                      <li> In comparison, nyu  is much less active, as the New York City has a much active local subreddit </li>
+                      <li> As we can see most of the piecharts align towards positive segments, as the mods of reddit and downvote ability removes negative comments.</li>
+
+                      </ul>
+
+                    </Card.Text>
+                    <Card.Title>  Functionality : </Card.Title>
+                    <Card.Text>
+
+                      <ul>
+                      <li> On the right we display the comments, title and upvote score when we hovering over the piechart. This let’s users understand where the data from the display is coming from.</li>
+                      <li> When any of the piecharts is clicked it takes the user to the original reddit post.</li>
+                      <li> Use the search functionality to search and select the reddit for live viz </li>
+                      </ul>
+                    </Card.Text>
+                    <Card.Title>  Further Improvement : </Card.Title>
+                    <Card.Text>
+
+                      <ul>
+                      <li> The historical data is only for past 1/2 days. This can lead to a false assumption that the a most is more active than another. We only display the data for few days which is not a measure of how popular the post is.</li>
+                      <li> Similarly, it’s positive to add more negative comments when the thread doesn’t have a lot of incoming comments as the two mechanism of moderation (moderators and downvote) won't be effective. This can lead to certain treads to appear more negative than they are.</li>
+                      <li> The GoogleBig Query database we used gets updated once or twice per day. We rely on praw library to update the upvote count which is laggy. </li>
+
+                      </ul>
+                    </Card.Text>
+                  </Card.Body>
+                </Card>;
+
             </>
         )
     }
