@@ -19,19 +19,25 @@ class TimeSeriesPie extends Component {
             chart: null
         };
 
+        this.onCommentRecieve.bind(this);
+        this.onSubmissionRecieve.bind(this);
+
         // set up initial submissions and comments if any
         let rowSubmissionStream = props.submissions;
         if (rowSubmissionStream) {
-            //initialSubmissions.forEach(s => this.onSubmissionRecieve(s));
-            rowSubmissionStream.on('data', s => this.onSubmissionRecieve(s));
+            rowSubmissionStream.forEach(s => this.onSubmissionRecieve(s));
+            //rowSubmissionStream.on('data', s => this.onSubmissionRecieve(s));
+            //this.state.submissionStream = rowSubmissionStream;
             //rowSubmissionStream.onmessage = s => this.onSubmissionRecieve(s);
         }
         let commentStream = props.comments;
         if (commentStream) {
-            //commentStream.forEach(c => this.onCommentRecieve(c));
-            commentStream.on('data', c => this.onCommentRecieve(c));
-            //commentStream.onmessage = c => this.onCommentRecieve(c);
+            console.log("TimeSeriesPie (" + this.state.beginTime + "): CommentStream");
             console.log(commentStream);
+            commentStream.forEach(c => this.onCommentRecieve(c));
+            //commentStream.on('data', c => this.onCommentRecieve(c));
+            //this.state.commentStream = commentStream;
+            //commentStream.onmessage = c => this.onCommentRecieve(c);
         }
 
         // set refresh logic
@@ -43,6 +49,7 @@ class TimeSeriesPie extends Component {
         if (submission.postId in this.state.postState) { // make sure to not duplicate submissions
             return;
         }
+
 
         // possibly scale upvotes to change bubble sizes better?
         let upvoteScaleFactor = 1;
@@ -98,6 +105,7 @@ class TimeSeriesPie extends Component {
 
         }
 
+        //console.log(this.state.postState);
         this.forceUpdate();
     }
 
@@ -122,21 +130,24 @@ class TimeSeriesPie extends Component {
     }
 
     onCommentRecieve(comment) {
+        console.log("COMMENT");
         let postId = comment.postId;
+        if (postId == "") {
+
+        }
         if (!(postId in this.state.postState)){ // check if has seen post
             return;
         }
+
+        console.log(comment);
         this.state.postState[postId][comment.sentimentType].sentimentCount += 1;
+        console.log(this.state.postState[postId]);
 
         let link_date = this.state.idToTime[comment.postId];
-        if (this.state.postTimeToInfo[link_date].count_comment < 10)   
-            {
-                this.state.postTimeToInfo[link_date].postText.push(comment.text);
-
-
-            }
+        if (this.state.postTimeToInfo[link_date].count_comment < 10){
+            this.state.postTimeToInfo[link_date].postText.push(comment.text);
+        }
         this.state.postTimeToInfo[link_date].count_comment += 1;
-
         this.forceUpdate();
     }
 
@@ -204,7 +215,7 @@ class TimeSeriesPie extends Component {
             let postTime = ev.xValue.getTime(),
                 postUrl = this.state.postTimeToInfo[postTime].URL;
             window.open(postUrl, "_blank");
-        }) ;
+        });
 
         // Override the standard tooltip behaviour
         let onMouseOver = this.state.onMouseOver
@@ -221,6 +232,11 @@ class TimeSeriesPie extends Component {
 
         //chart.draw();
         return chart;
+    }
+
+    componentWillUnmount() {
+        //this.state.commentStream.destroy();
+        //this.state.submissionStream.destroy();
     }
 
     render() {

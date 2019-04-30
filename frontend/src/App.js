@@ -17,14 +17,34 @@ class App extends Component {
             comments: [],
             commentStream: null,
             submissionStream: null,
+            value: "UIUC",
             streaming: false,
+            dateMap: {
+                "UIUC": new Date(2019, 3, 27),
+                "uwaterloo": new Date(2019, 3, 29),
+                "nyu": new Date(2019, 3, 29),
+                "ucla": new Date(2019, 3, 29),
+                "aggies": new Date(2019, 3, 29)
+            },
+            liveSubreddit: "AskReddit"
         };
         this.toggleLive = this.toggleLive.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
         this.loadHistoricalData();
     }
 
-    onCommentRecieved(comment) {
-        this.setState({comments: this.state.comments.concat([comment.data])});
+    handleChange(event) {
+        console.log(event.target.value);
+        this.setState({value: event.target.value}, () => {
+            this.cleanupStreams();
+            this.loadHistoricalData();
+        });
+    }
+
+    handleSubmit(event) {
+        alert('Your dataset right now is: ' + "/sample_link_" + this.state.value + ".csv");
+        event.preventDefault();
     }
 
     componentWillUnmount() {
@@ -34,7 +54,7 @@ class App extends Component {
     determineLabel(comment) {
         let posScore = comment.posScore;
         let negScore = comment.negScore;
-        let neuScore = comment.neuScore;
+        let neuScore = comment.neutralScore;
         if (posScore > negScore && posScore > neuScore)  {
             return "positive";
         } else if (neuScore > posScore && neuScore > negScore) {
@@ -45,12 +65,18 @@ class App extends Component {
     };
 
     loadHistoricalData() {
-        let submissionFile = "/sample_link_UIUC.csv";
-        let commentFile = "/sample_comm_UIUC.csv";
+        let submissionFile = "/sample_link_" + this.state.value + ".csv";
+        let commentFile = "/sample_comm_" + this.state.value + ".csv";
+        console.log(submissionFile);
+        console.log(commentFile);
+        // let submissionFile = "/sample_link_UIUC.csv";
+        // let commentFile = "/sample_comm_UIUC.csv";
         d3.csv(submissionFile, submissionData => {
             d3.csv(commentFile, commentData => {
                 submissionData.map(s => s.postDate *= 1000) ; // convert to millis
                 commentData.map(c => c.sentimentType = this.determineLabel(c));
+
+                console.log(commentData);
 
                 // create streams from arrays
                 const submissionStream = new Stream.Readable({objectMode: true});
@@ -58,15 +84,24 @@ class App extends Component {
                 submissionData.forEach(item => submissionStream.push(item));
                 submissionStream.push(null);
 
+                this.setState({submissionStream: submissionStream})
+
                 const commentStream = new Stream.Readable({objectMode: true});
                 commentStream._read = () => {};
                 commentData.forEach(item => commentStream.push(item));
                 commentStream.push(null);
 
                 this.setState({
-                    submissionStream: submissionStream,
                     commentStream: commentStream
                 });
+
+                let cDist = {
+                    "positive": 0,
+                    "negative": 0,
+                    "neutral": 0
+                }
+                commentData.forEach(c => cDist[c.sentimentType] += 1);
+                console.log(cDist);
             });
         });
     }
@@ -99,18 +134,24 @@ class App extends Component {
 
     cleanupStreams() {
         // close event sources
-        this.state.commentEventSource.close();
-        this.state.submissionEventSource.close();
+        if (this.state.commentEventSource) {
+            this.state.commentEventSource.close();
+        }
+        if (this.state.submissionEventSource) {
+            this.state.submissionEventSource.close();
+        }
         // close streams
         this.state.submissionStream.push(null);
+        this.state.submissionStream.destroy();
         this.state.commentStream.push(null);
+        this.state.commentStream.destroy();
     }
 
     toggleLive(toggleValue, event) {
         let streaming = !!toggleValue;
         if (streaming) { // create streams
-            this.initCommentStream("AskReddit");
-            this.initSubmissionStream("AskReddit");
+            this.initCommentStream(this.state.liveSubreddit);
+            this.initSubmissionStream(this.state.liveSubreddit);
             this.setState({streaming: streaming});
         } else { // close existing streams
             this.setState({streaming: streaming});
@@ -119,10 +160,50 @@ class App extends Component {
         }
     }
 
+    searchLiveSubreddit(e) {
+        e.preventDefault();
+        let textIn = document.getElementById("SubredditSearch");
+        let subredditName = textIn.value;
+        console.log("SWITCHING TO " + subredditName);
+        this.cleanupStreams();
+        this.initCommentStream(subredditName);
+        this.initSubmissionStream(subredditName);
+        this.setState({liveSubreddit: subredditName});
+    }
+
     render() {
         key += 1;
         return (
             <>
+            <h1> Reddit Flow </h1>
+            <div>
+                { ! this.state.streaming && 
+                        <form onSubmit={this.handleSubmit}>
+                            <label>
+                                Pick a Subreddit:
+                                <select onChange= {this.handleChange}>
+                                    <option value="UIUC">UIUC</option>
+                                    <option value="uwaterloo">uwaterloo</option>
+                                    <option value="nyu">nyu</option>
+                                    <option value="ucla">ucla</option>
+                                    <option value="aggies">aggies</option>
+                                </select>
+                            </label>
+                            <input type="submit" value="Submit" />
+                        </form>
+                }
+                    </div>
+            <div>
+                { this.state.streaming && 
+                        <form>
+                            <label>
+                                Subreddit:
+                                <input id="SubredditSearch" type="text" name="Subreddit" />
+                            </label>
+                            <input type="button" type="submit" value="Submit" onClick={e => this.searchLiveSubreddit(e)}/>
+                        </form>
+                }
+                    </div>
             <div className="d-flex justify-content-center">
                 <ButtonToolbar>
                     <ToggleButtonGroup type="radio" name="options" defaultValue={0} onChange={this.toggleLive}>
@@ -132,21 +213,21 @@ class App extends Component {
                 </ButtonToolbar>
             </div>
             <div>
-                {this.state.commentStream && this.state.submissionStream? 
-                    <>
-                    <RedditDayFlow
-                        key={key}
-                        submissions={this.state.submissionStream}
-                        comments={this.state.commentStream}
-                        nRows={4}
-                        date={this.state.streaming ? Date.now() : new Date(2019, 3, 27)}
-                    />
-                    </>
-                    :
-                    <p> Loading... </p>
+                {this.state.commentStream && this.state.submissionStream?
+                        <>
+                        <h4>{this.state.streaming ? "Live Data": "Historical Data"} </h4>
+                        <RedditDayFlow
+                            key={key}
+                            submissions={this.state.submissionStream}
+                            comments={this.state.commentStream}
+                            nRows={4}
+                            date={this.state.streaming ? Date.now() : this.state.dateMap[this.state.value]}
+                        />
+                        </>
+                        :
+                        <p> Loading... </p>
                 }
-            </div>
-            
+                    </div>
             </>
         )
     }
