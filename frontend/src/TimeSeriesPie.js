@@ -165,9 +165,9 @@ class TimeSeriesPie extends Component {
 
         let chart = new dimple.chart(svg, this.state.postPieData);
         chart.defaultColors = [
-            new dimple.color("#e74c3c", "#c0392b", 0.6), // red
-            new dimple.color("#f1c40f", "#f39c12", 0.6), // yellow
-            new dimple.color("#2ecc71", "#27ae60", 0.6), // green
+            new dimple.color("#dc3545", "#dc3545", 0.6), // red
+            new dimple.color("#ffa10c", "#ffa10c", 0.6), // yellow
+            new dimple.color("#0a661f", "#0a661f", 0.6), // green
         ];
 
         let x = chart.addTimeAxis("x", "postDate");
