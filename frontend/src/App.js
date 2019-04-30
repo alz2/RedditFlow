@@ -48,7 +48,7 @@ class App extends Component {
     determineLabel(comment) {
         let posScore = comment.posScore;
         let negScore = comment.negScore;
-        let neuScore = comment.neuScore;
+        let neuScore = comment.neutralScore;
         if (posScore > negScore && posScore > neuScore)  {
             return "positive";
         } else if (neuScore > posScore && neuScore > negScore) {
@@ -69,6 +69,8 @@ class App extends Component {
             d3.csv(commentFile, commentData => {
                 submissionData.map(s => s.postDate *= 1000) ; // convert to millis
                 commentData.map(c => c.sentimentType = this.determineLabel(c));
+
+                console.log(commentData);
 
                 // create streams from arrays
                 const submissionStream = new Stream.Readable({objectMode: true});

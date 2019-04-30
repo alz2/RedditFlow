@@ -31,7 +31,6 @@ class TimeSeriesPie extends Component {
             //commentStream.forEach(c => this.onCommentRecieve(c));
             commentStream.on('data', c => this.onCommentRecieve(c));
             //commentStream.onmessage = c => this.onCommentRecieve(c);
-            console.log(commentStream);
         }
     }
 
@@ -120,7 +119,7 @@ class TimeSeriesPie extends Component {
             this.state.chart = this.createChart();
         } 
         this.state.chart.draw();
-        console.log(this.state.postState);
+        //console.log(this.state.postState);
     }
 
     createChart() {
@@ -163,7 +162,7 @@ class TimeSeriesPie extends Component {
             let postTime = ev.xValue.getTime(),
                 postUrl = this.state.postTimeToInfo[postTime].URL;
             window.open(postUrl, "_blank");
-        }) ;
+        });
 
         // Override the standard tooltip behaviour
         let onMouseOver = this.state.onMouseOver
