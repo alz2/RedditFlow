@@ -4,7 +4,7 @@ import d3 from 'd3';
 import RedditDayFlow from './RedditDayFlow.js';
 import logo from './logo.svg';
 import './App.css';
-import { ButtonToolbar, ToggleButtonGroup, ToggleButton }from 'react-bootstrap';
+import { ButtonToolbar, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 
 let key = 0; // global key for react updates :(
 
@@ -133,7 +133,6 @@ class App extends Component {
             <div>
                 {this.state.commentStream && this.state.submissionStream? 
                     <>
-                    
                     <RedditDayFlow
                         key={key}
                         submissions={this.state.submissionStream}

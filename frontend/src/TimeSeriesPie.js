@@ -132,22 +132,31 @@ class TimeSeriesPie extends Component {
         this.forceUpdate();
     }
 
+    alignTimeAxis() {
+        // get all outer g tags
+        let gs = [].slice.call(document.getElementsByTagName('g')).filter(g => g.parentNode.tagName == "svg");
+        gs.forEach(g => g.style.cssText = "transform: translate(0%, -45%)");
+    }
+
     componentDidMount() {
         if (!this.state.chart) {
             this.state.chart = this.createChart();
         } 
         this.state.chart.draw();
+        this.alignTimeAxis()
     }
+
     componentDidUpdate() {
         if (!this.state.chart) {
             this.state.chart = this.createChart();
         } 
         this.state.chart.draw();
+        this.alignTimeAxis();
     }
 
     createChart() {
         let svgWidth = "100%";
-        let svgHeight = 500;
+        let svgHeight = 150;
         let svg = d3.select(this.node)
             .append("svg")
             .attr("width", svgWidth)
