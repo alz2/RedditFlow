@@ -14,6 +14,7 @@ class TimeSeriesPie extends Component {
             beginTime: beginTime, // start time of this row
             endTime: endTime, // end time of this row
             postTimeToInfo: {},
+            idToTime: {},
             onMouseOver: props.onMouseOver, // target div to display on hover
             chart: null
         };
@@ -56,7 +57,8 @@ class TimeSeriesPie extends Component {
             upvotes: scoreScaled,
             sentimentType: "neutral",
             sentimentCount: 1,
-            ycord: 0
+            ycord: 0,
+
         };
         var neg = {
             postId: submission.postId,
@@ -77,12 +79,14 @@ class TimeSeriesPie extends Component {
         this.state.postPieData.push(neu);
         this.state.postPieData.push(neg);
 
+        this.state.idToTime[submission.postId] =  submission.postDate
         // update time to URL Map
         this.state.postTimeToInfo[submission.postDate] = {
             URL: submission.URL,
             postTitle: submission.postTitle,
             postAuthor: submission.postAuthor,
-            upvotes: submission.score
+            upvotes: submission.score,
+            postText : []
         }
 
         this.forceUpdate();
@@ -94,7 +98,13 @@ class TimeSeriesPie extends Component {
             return;
         }
         this.state.postState[postId][comment.sentimentType].sentimentCount += 1;
+        let link_date = this.state.idToTime[comment.postId];
+
+        // console.log(this.state.idToTime[comment.postId])
+        this.state.postTimeToInfo[link_date].postText.push(comment.text);
+        // console.log(comment.text)
         this.forceUpdate();
+
     }
 
     componentDidMount() {
@@ -159,8 +169,9 @@ class TimeSeriesPie extends Component {
             pies.addEventHandler("mouseover", function (e){
                 let postTime = e.xValue.getTime(),
                     postTitle =  postTimeToInfo[postTime].postTitle,
-                    postAuthor = postTimeToInfo[postTime].postAuthor
-                onMouseOver(e, postTitle, postAuthor);
+                    postAuthor = postTimeToInfo[postTime].postAuthor,
+                    postText = postTimeToInfo[postTime].postText
+                onMouseOver(e, postTitle, postAuthor,postText);
             });
         }
 

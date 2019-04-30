@@ -70,13 +70,16 @@ class RedditDayFlow extends Component {
         }
     }
 
-    onSubmissionMouseOver(dimpleEv, postTitle, postAuthor) {
+    onSubmissionMouseOver(dimpleEv, postTitle, postAuthor,postText) {
         let submissionInfo = {
             postDate: dimpleEv.xValue,
             postTitle: postTitle,
             upvotes: dimpleEv.zValue,
-            postAuthor: postAuthor
+            postAuthor: postAuthor,
+            postText: postText
+
         }
+        console.log(submissionInfo)
         this.setState({currentSubmissionHoverInfo: submissionInfo})
     }
 
@@ -115,6 +118,8 @@ class RedditDayFlow extends Component {
                             <h1>{this.state.currentSubmissionHoverInfo.postTitle}</h1>
                             <h4>{this.state.currentSubmissionHoverInfo.postAuthor}</h4>
                             <h4>{this.state.currentSubmissionHoverInfo.upvotes}</h4>
+                        <details>  {this.state.currentSubmissionHoverInfo.postText[0]}
+                        </details>                        
                         </>
                     }
                 </div>
@@ -124,5 +129,4 @@ class RedditDayFlow extends Component {
     }
 
 }
-
 export default RedditDayFlow;
