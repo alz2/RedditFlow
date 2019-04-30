@@ -132,6 +132,9 @@ class TimeSeriesPie extends Component {
     onCommentRecieve(comment) {
         console.log("COMMENT");
         let postId = comment.postId;
+        if (postId == "") {
+
+        }
         if (!(postId in this.state.postState)){ // check if has seen post
             return;
         }

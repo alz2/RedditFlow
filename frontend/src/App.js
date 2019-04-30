@@ -21,8 +21,12 @@ class App extends Component {
             streaming: false,
             dateMap: {
                 "UIUC": new Date(2019, 3, 27),
-                "uwaterloo": new Date(2019, 3, 29)
-            }
+                "uwaterloo": new Date(2019, 3, 29),
+                "nyu": new Date(2019, 3, 29),
+                "ucla": new Date(2019, 3, 29),
+                "aggies": new Date(2019, 3, 29)
+            },
+            liveSubreddit: "AskReddit"
         };
         this.toggleLive = this.toggleLive.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -146,8 +150,8 @@ class App extends Component {
     toggleLive(toggleValue, event) {
         let streaming = !!toggleValue;
         if (streaming) { // create streams
-            this.initCommentStream("AskReddit");
-            this.initSubmissionStream("AskReddit");
+            this.initCommentStream(this.state.liveSubreddit);
+            this.initSubmissionStream(this.state.liveSubreddit);
             this.setState({streaming: streaming});
         } else { // close existing streams
             this.setState({streaming: streaming});
@@ -156,22 +160,50 @@ class App extends Component {
         }
     }
 
+    searchLiveSubreddit(e) {
+        e.preventDefault();
+        let textIn = document.getElementById("SubredditSearch");
+        let subredditName = textIn.value;
+        console.log("SWITCHING TO " + subredditName);
+        this.cleanupStreams();
+        this.initCommentStream(subredditName);
+        this.initSubmissionStream(subredditName);
+        this.setState({liveSubreddit: subredditName});
+    }
+
     render() {
         key += 1;
         return (
             <>
             <h1> Reddit Flow </h1>
-            <form onSubmit={this.handleSubmit}>
-                <label>
-                    Pick a Subreddit:
-                    <select onChange= {this.handleChange}>
-                        <option value="UIUC">UIUC</option>
-                        <option value="uwaterloo">uwaterloo</option>
-                        <option value="redditdev">redditdev</option>
-                    </select>
-                </label>
-                <input type="submit" value="Submit" />
-            </form>
+            <div>
+                { ! this.state.streaming && 
+                        <form onSubmit={this.handleSubmit}>
+                            <label>
+                                Pick a Subreddit:
+                                <select onChange= {this.handleChange}>
+                                    <option value="UIUC">UIUC</option>
+                                    <option value="uwaterloo">uwaterloo</option>
+                                    <option value="nyu">nyu</option>
+                                    <option value="ucla">ucla</option>
+                                    <option value="aggies">aggies</option>
+                                </select>
+                            </label>
+                            <input type="submit" value="Submit" />
+                        </form>
+                }
+                    </div>
+            <div>
+                { this.state.streaming && 
+                        <form>
+                            <label>
+                                Subreddit:
+                                <input id="SubredditSearch" type="text" name="Subreddit" />
+                            </label>
+                            <input type="button" type="submit" value="Submit" onClick={e => this.searchLiveSubreddit(e)}/>
+                        </form>
+                }
+                    </div>
             <div className="d-flex justify-content-center">
                 <ButtonToolbar>
                     <ToggleButtonGroup type="radio" name="options" defaultValue={0} onChange={this.toggleLive}>
