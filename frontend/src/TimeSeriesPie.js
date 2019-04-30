@@ -193,7 +193,9 @@ class TimeSeriesPie extends Component {
 
         chart.addMeasureAxis("p", "sentimentCount"); // attribute for slice
         let z = chart.addLogAxis("z", "upvotes"); // pie radius
-        z.logBase = 2;
+        z.logBase = 10;
+        z.overrideMin = 0;
+        z.overrideMax = 5000;
 
         let pies = chart.addSeries("sentimentType", dimple.plot.pie); // pie over sentimentType
         pies.radius = 50;
