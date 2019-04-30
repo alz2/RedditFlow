@@ -5,3 +5,7 @@
 .Btn-L-BG, .Btn-L-BG:hover, .Btn-L-BG:active, .Btn-L-BG:visited {
   background-color: #e74c3c !important;
 }
+
+.Btn-Y-BG, .Btn-Y-BG:hover, .Btn-Y-BG:active, .Btn-Y-BG:visited {
+  background-color: #f1c40f !important;
+}
