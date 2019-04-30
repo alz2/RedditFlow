@@ -1,0 +1,7 @@
+.Btn-H-BG, .Btn-H-BG:hover, .Btn-H-BG:active, .Btn-H-BG:visited {
+  background-color: #2ecc71 !important;
+}
+
+.Btn-L-BG, .Btn-L-BG:hover, .Btn-L-BG:active, .Btn-L-BG:visited {
+  background-color: #e74c3c !important;
+}
