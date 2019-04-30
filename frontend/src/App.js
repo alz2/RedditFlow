@@ -122,10 +122,18 @@ class App extends Component {
         key += 1
         return (
             <>
+            <div className="d-flex justify-content-center">
+                <ButtonToolbar>
+                    <ToggleButtonGroup type="radio" name="options" defaultValue={0} onChange={this.toggleLive}>
+                        <ToggleButton variant="success" value={0}>Historical Data</ToggleButton>
+                        <ToggleButton variant="danger" value={1}>Live</ToggleButton>
+                    </ToggleButtonGroup>
+                </ButtonToolbar>
+            </div>
             <div>
                 {this.state.commentStream && this.state.submissionStream? 
                     <>
-                    <h4>{this.state.streaming ? "Live Data": "Historical Data"} </h4>
+                    
                     <RedditDayFlow
                         key={key}
                         submissions={this.state.submissionStream}
@@ -138,14 +146,7 @@ class App extends Component {
                     <p> Loading... </p>
                 }
             </div>
-            <div className="d-flex justify-content-center">
-                <ButtonToolbar>
-                    <ToggleButtonGroup type="radio" name="options" defaultValue={0} onChange={this.toggleLive}>
-                        <ToggleButton variant="success" value={0}>Historical Data</ToggleButton>
-                        <ToggleButton variant="danger" value={1}>Live</ToggleButton>
-                    </ToggleButtonGroup>
-                </ButtonToolbar>
-            </div>
+            
             </>
         )
     }
