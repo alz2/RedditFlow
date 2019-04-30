@@ -26,7 +26,7 @@ def subreddit_comment_stream(name):
                 "commentId": comment.id,
                 "author": comment.author.name,
                 "score": comment.score,
-                "postDate": comment.created_utc,
+                "postDate": comment.created_utc * 1000,
                 "text": comment.body,
                 "URL": "",
                 "neutralScore": ss['neu'],
@@ -44,7 +44,7 @@ def subreddit_submission_stream(name):
                 "postTitle": submission.title,
                 "postAuthor": submission.author.name,
                 "score": submission.score,
-                "postDate": submission.created_utc,
+                "postDate": submission.created_utc * 1000,
                 "upvoteRatio": submission.upvote_ratio,
                 "URL": submission.url
                 }

@@ -19,15 +19,18 @@ class TimeSeriesPie extends Component {
         };
 
         // set up initial submissions and comments if any
-        let initialSubmissions = props.submissions;
-        if (initialSubmissions) {
+        let rowSubmissionStream = props.submissions;
+        if (rowSubmissionStream) {
             //initialSubmissions.forEach(s => this.onSubmissionRecieve(s));
-            initialSubmissions.on('data', s => this.onSubmissionRecieve(s));
+            rowSubmissionStream.on('data', s => this.onSubmissionRecieve(s));
+            //rowSubmissionStream.onmessage = s => this.onSubmissionRecieve(s);
         }
-        let initialComments = props.comments;
-        if (initialComments) {
-            //initialComments.forEach(c => this.onCommentRecieve(c));
-            initialComments.on('data', c => this.onCommentRecieve(c));
+        let commentStream = props.comments;
+        if (commentStream) {
+            //commentStream.forEach(c => this.onCommentRecieve(c));
+            commentStream.on('data', c => this.onCommentRecieve(c));
+            //commentStream.onmessage = c => this.onCommentRecieve(c);
+            console.log(commentStream);
         }
     }
 

@@ -14,10 +14,6 @@ class RedditDayFlow extends Component {
         console.log("DAY BEGIN: " + new Date(dayBegin));
         let dayEnd = dayBegin + millisDay;
 
-        // only keep data of the day
-        let commentData = props.comments;
-        //let submissionData = props.submissions.filter(s => (s.postDate >= dayBegin && s.postDate < dayEnd));
-
         // set up row dates to determine whether a entry is in a row
         let millisRow = millisDay / props.nRows;
         let rowTimes = []; // row start and end times
@@ -58,6 +54,7 @@ class RedditDayFlow extends Component {
     }
 
     onSubmissionRecieve(s) {
+        console.log(s);
         // determine whether to keep submission
         if (s.postDate < this.state.dayBegin || s.postDate >= this.state.dayEnd) {
             return; 
@@ -68,6 +65,7 @@ class RedditDayFlow extends Component {
                 break;
             }
         }
+        this.forceUpdate();
     }
 
     onSubmissionMouseOver(dimpleEv, postTitle, postAuthor) {
@@ -81,6 +79,7 @@ class RedditDayFlow extends Component {
     }
 
     onCommentRecieve(c) {
+        console.log(c);
         // TODO: inefficient implementation (leaving lower props to filter)
         for (let i = 0; i < this.state.nRows; i++) {
             this.state.rowData[i].comments.push(c);
@@ -92,6 +91,7 @@ class RedditDayFlow extends Component {
         for (let i = 0; i < this.state.nRows; i++) {
             rows.push(
                 <TimeSeriesPie
+                    key={i}
                     submissions={this.state.rowData[i].submissions} 
                     comments={this.state.rowData[i].comments}
                     beginTime={this.state.rowTimes[i].beginTime}
@@ -105,6 +105,7 @@ class RedditDayFlow extends Component {
     render() {
         return (
             <>
+            <h1>{"" + new Date(this.state.dayBegin)}</h1>
             <div style={{display: "flex"}}>
                 <div className="RedditDayFlow_chart"> 
                     {this.createTimeSeriesPieRows()}
