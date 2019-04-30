@@ -19,6 +19,10 @@ class App extends Component {
             submissionStream: null,
             value: "UIUC",
             streaming: false,
+            dateMap: {
+                "UIUC": new Date(2019, 3, 27),
+                "uwaterloo": new Date(2019, 3, 29)
+            }
         };
         this.toggleLive = this.toggleLive.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -76,13 +80,14 @@ class App extends Component {
                 submissionData.forEach(item => submissionStream.push(item));
                 submissionStream.push(null);
 
+                this.setState({submissionStream: submissionStream})
+
                 const commentStream = new Stream.Readable({objectMode: true});
                 commentStream._read = () => {};
                 commentData.forEach(item => commentStream.push(item));
                 commentStream.push(null);
 
                 this.setState({
-                    submissionStream: submissionStream,
                     commentStream: commentStream
                 });
 
@@ -184,7 +189,7 @@ class App extends Component {
                             submissions={this.state.submissionStream}
                             comments={this.state.commentStream}
                             nRows={4}
-                            date={this.state.streaming ? Date.now() : new Date(2019, 3, 27)}
+                            date={this.state.streaming ? Date.now() : this.state.dateMap[this.state.value]}
                         />
                         </>
                         :

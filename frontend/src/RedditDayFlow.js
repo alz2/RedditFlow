@@ -5,6 +5,8 @@ import './App.css';
 
 import TimeSeriesPie from './TimeSeriesPie.js';
 
+let key = 0;
+
 class RedditDayFlow extends Component {
     constructor(props) {
         super(props);
@@ -28,14 +30,15 @@ class RedditDayFlow extends Component {
             });
 
             // create rowData entry
-            let rowSubmissionStream = new Stream.Readable({objectMode: true})
-            rowSubmissionStream._read = () => {};
-            let rowCommentStream = new Stream.Readable({objectMode: true})
-            rowCommentStream._read = () => {};
+            //let rowSubmissionStream = new Stream.Readable({objectMode: true})
+            //rowSubmissionStream._read = () => {};
+            //let rowCommentStream = new Stream.Readable({objectMode: true})
+            //rowCommentStream._read = () => {};
 
             rowData[i] = {
-                submissions: rowSubmissionStream,
-                comments: rowCommentStream
+                //submissions: rowSubmissionStream,
+                //comments: rowCommentStream
+                ref: React.createRef()
             };
         }
 
@@ -54,6 +57,7 @@ class RedditDayFlow extends Component {
     }
 
     onSubmissionRecieve(s) {
+        console.log(s);
         // determine whether to keep submission
         if (s.postDate < this.state.dayBegin || s.postDate >= this.state.dayEnd) {
             return;
@@ -61,7 +65,10 @@ class RedditDayFlow extends Component {
 
         for (let i = 0; i < this.state.nRows; i++) {
             if (s.postDate >= this.state.rowTimes[i].beginTime && s.postDate < this.state.rowTimes[i].endTime) {
-                this.state.rowData[i].submissions.push(s);
+                //this.state.rowData[i].submissions.push(s);
+                if (this.state.rowData[i].current) {
+                    this.state.rowData[i].current.onSubmissionRecieve(s);
+                }
                 break;
             }
         }
@@ -84,7 +91,8 @@ class RedditDayFlow extends Component {
     onCommentRecieve(c) {
         // TODO: inefficient implementation (leaving lower props to filter)
         for (let i = 0; i < this.state.nRows; i++) {
-            this.state.rowData[i].comments.push(c);
+            //this.state.rowData[i].comments.push(c);
+            this.state.rowData[i].current.onCommentRecieve(c);
         }
     }
 
@@ -95,6 +103,7 @@ class RedditDayFlow extends Component {
             rows.push(
                 <TimeSeriesPie
                     key={i}
+                    ref={this.state.rowData[i]}
                     submissions={this.state.rowData[i].submissions}
                     comments={this.state.rowData[i].comments}
                     beginTime={this.state.rowTimes[i].beginTime}
@@ -107,12 +116,12 @@ class RedditDayFlow extends Component {
 
     componentWillUnmount() {
         console.log("REDDITDAYFLOWUNMOUNT");
-        for (let i = 0; i < this.state.nRows; i++) {
-            this.state.rowData[i].comments.push(null);
-            this.state.rowData[i].comments.destroy()
-            this.state.rowData[i].submissions.push(null);
-            this.state.rowData[i].submissions.destroy()
-        }
+        //for (let i = 0; i < this.state.nRows; i++) {
+        //    this.state.rowData[i].comments.push(null);
+        //    this.state.rowData[i].comments.destroy()
+        //    this.state.rowData[i].submissions.push(null);
+        //    this.state.rowData[i].submissions.destroy()
+        //}
     }
 
     render() {
