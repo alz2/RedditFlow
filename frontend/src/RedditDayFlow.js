@@ -108,7 +108,7 @@ class RedditDayFlow extends Component {
     render() {
         return (
             <>
-            <h1>{"" + new Date(this.state.dayBegin)}</h1>
+            <h6>{"" + new Date(this.state.dayBegin)}</h6>
             <div style={{display: "flex"}}>
                 <div className="RedditDayFlow_chart"> 
                     {this.createTimeSeriesPieRows()}
