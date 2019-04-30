@@ -93,7 +93,9 @@ class TimeSeriesPie extends Component {
             postTitle: submission.postTitle,
             postAuthor: submission.postAuthor,
             upvotes: submission.score,
-            postText : []
+            postText : [],
+            count_comment : 1
+
         }
 
         this.forceUpdate();
@@ -127,7 +129,13 @@ class TimeSeriesPie extends Component {
         this.state.postState[postId][comment.sentimentType].sentimentCount += 1;
 
         let link_date = this.state.idToTime[comment.postId];
-        this.state.postTimeToInfo[link_date].postText.push(comment.text);
+        if (this.state.postTimeToInfo[link_date].count_comment < 10)   
+            {
+                this.state.postTimeToInfo[link_date].postText.push(comment.text);
+
+
+            }
+        this.state.postTimeToInfo[link_date].count_comment += 1;
 
         this.forceUpdate();
     }
@@ -165,9 +173,9 @@ class TimeSeriesPie extends Component {
 
         let chart = new dimple.chart(svg, this.state.postPieData);
         chart.defaultColors = [
-            new dimple.color("#dc3545", "#dc3545", 0.6), // red
-            new dimple.color("#ffa10c", "#ffa10c", 0.6), // yellow
-            new dimple.color("#0a661f", "#0a661f", 0.6), // green
+            new dimple.color("#e74c3c", "#c0392b", 0.6), // red
+            new dimple.color("#f1c40f", "#f39c12", 0.6), // yellow
+            new dimple.color("#2ecc71", "#27ae60", 0.6), // green
         ];
 
         let x = chart.addTimeAxis("x", "postDate");
@@ -184,11 +192,8 @@ class TimeSeriesPie extends Component {
         y.hidden = true; // hide dummy axis
 
         chart.addMeasureAxis("p", "sentimentCount"); // attribute for slice
-        //let z = chart.addLogAxis("z", "upvotes"); // pie radius
         let z = chart.addLogAxis("z", "upvotes"); // pie radius
-        z.logBase = 10;
-        z.overrideMin = 0;
-        z.overrideMax = 5000;
+        z.logBase = 2;
 
         let pies = chart.addSeries("sentimentType", dimple.plot.pie); // pie over sentimentType
         pies.radius = 50;
@@ -211,9 +216,6 @@ class TimeSeriesPie extends Component {
                 onMouseOver(e, postTitle, postAuthor,postText);
             });
         }
-
-        //chart.setBounds(80, "50px", "100%", "50%"); Gave up on this
-
 
         //chart.draw();
         return chart;

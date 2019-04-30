@@ -10,7 +10,7 @@ class RedditDayFlow extends Component {
         super(props);
         let inDate = props.date;
         let millisDay = 24 * 60 * 60 * 1000;
-        let dayBegin = startOfDay(inDate).getTime();
+        let dayBegin = startOfDay(inDate).getTime(); ///// Fix
         console.log("DAY BEGIN: " + new Date(dayBegin));
         let dayEnd = dayBegin + millisDay;
 
@@ -65,6 +65,7 @@ class RedditDayFlow extends Component {
                 break;
             }
         }
+
         this.forceUpdate();
     }
 
@@ -119,7 +120,7 @@ class RedditDayFlow extends Component {
                             <h1>{this.state.currentSubmissionHoverInfo.postTitle}</h1>
                             <h4>{this.state.currentSubmissionHoverInfo.postAuthor}</h4>
                             <h4>{this.state.currentSubmissionHoverInfo.upvotes}</h4>
-                        <details>  {this.state.currentSubmissionHoverInfo.postText[0]}
+                        <details>  {this.state.currentSubmissionHoverInfo.postText}
                         </details>                        
                         </>
                     }
