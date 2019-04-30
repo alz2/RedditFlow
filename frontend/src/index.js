@@ -4,6 +4,12 @@ import './index.css';
 import App from './App';
 import TimeSeriesPie from './TimeSeriesPie';
 import * as serviceWorker from './serviceWorker';
+import AppName from './AppName';
+import SortBy from './SortBy';
+import DynamicSwitch from './DynamicSwitch';
+import PostsPerLine from './PostsPerLine';
+
+
 
 ReactDOM.render(
     <>
@@ -13,6 +19,10 @@ ReactDOM.render(
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
         crossorigin="anonymous"
     />
+    <AppName />
+	
+	<SortBy />
+	<PostsPerLine />
     <App />
     </>, document.getElementById('root'));
 
