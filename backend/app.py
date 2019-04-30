@@ -62,6 +62,12 @@ def submission_stream():
     return flask.Response(subreddit_submission_stream(r),
                           mimetype="text/event-stream")
 
+@app.route("/upvotes")
+def get_upvotes_for_post():
+    post_ids = request.args.getlist('postId')
+    res = [{"postId": pid, "score": reddit.submission(pid).score} for pid in post_ids]
+    return jsonify({"data": res})
+
 if __name__ == "__main__":
     app.run(port=8080,
             threaded=True,

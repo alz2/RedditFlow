@@ -10,7 +10,7 @@ class RedditDayFlow extends Component {
         super(props);
         let inDate = props.date;
         let millisDay = 24 * 60 * 60 * 1000;
-        let dayBegin = startOfDay(inDate).getTime();
+        let dayBegin = startOfDay(inDate).getTime(); ///// Fix
         console.log("DAY BEGIN: " + new Date(dayBegin));
         let dayEnd = dayBegin + millisDay;
 
@@ -54,17 +54,18 @@ class RedditDayFlow extends Component {
     }
 
     onSubmissionRecieve(s) {
-        console.log(s);
         // determine whether to keep submission
         if (s.postDate < this.state.dayBegin || s.postDate >= this.state.dayEnd) {
             return;
         }
+
         for (let i = 0; i < this.state.nRows; i++) {
             if (s.postDate >= this.state.rowTimes[i].beginTime && s.postDate < this.state.rowTimes[i].endTime) {
                 this.state.rowData[i].submissions.push(s);
                 break;
             }
         }
+
         this.forceUpdate();
     }
 
@@ -75,14 +76,12 @@ class RedditDayFlow extends Component {
             upvotes: dimpleEv.zValue,
             postAuthor: postAuthor,
             postText: postText
-
         }
         console.log(submissionInfo)
         this.setState({currentSubmissionHoverInfo: submissionInfo})
     }
 
     onCommentRecieve(c) {
-        console.log(c);
         // TODO: inefficient implementation (leaving lower props to filter)
         for (let i = 0; i < this.state.nRows; i++) {
             this.state.rowData[i].comments.push(c);
@@ -90,6 +89,7 @@ class RedditDayFlow extends Component {
     }
 
     createTimeSeriesPieRows = () => {
+        console.log("createTimeSeriesPieRows");
         let rows = [];
         for (let i = 0; i < this.state.nRows; i++) {
             rows.push(
@@ -105,10 +105,20 @@ class RedditDayFlow extends Component {
         return rows;
     }
 
+    componentWillUnmount() {
+        console.log("REDDITDAYFLOWUNMOUNT");
+        for (let i = 0; i < this.state.nRows; i++) {
+            this.state.rowData[i].comments.push(null);
+            this.state.rowData[i].comments.destroy()
+            this.state.rowData[i].submissions.push(null);
+            this.state.rowData[i].submissions.destroy()
+        }
+    }
+
     render() {
         return (
             <>
-            <h1>{"" + new Date(this.state.dayBegin)}</h1>
+            <h6>{"" + new Date(this.state.dayBegin)}</h6>
             <div style={{display: "flex"}}>
                 <div className="RedditDayFlow_chart">
                     {this.createTimeSeriesPieRows()}
@@ -119,8 +129,8 @@ class RedditDayFlow extends Component {
                             <h1>{this.state.currentSubmissionHoverInfo.postTitle}</h1>
                             <h4>{this.state.currentSubmissionHoverInfo.postAuthor}</h4>
                             <h4>{this.state.currentSubmissionHoverInfo.upvotes}</h4>
-                        <details>  {this.state.currentSubmissionHoverInfo.postText[0]}
-                        </details>
+                        <details>  {this.state.currentSubmissionHoverInfo.postText}
+                        </details>                        
                         </>
                     }
                 </div>

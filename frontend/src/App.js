@@ -4,7 +4,7 @@ import d3 from 'd3';
 import RedditDayFlow from './RedditDayFlow.js';
 import logo from './logo.svg';
 import './App.css';
-import { ButtonToolbar, ToggleButtonGroup, ToggleButton }from 'react-bootstrap';
+import { ButtonToolbar, ToggleButtonGroup, ToggleButton } from 'react-bootstrap';
 
 let key = 0; // global key for react updates :(
 
@@ -28,6 +28,7 @@ class App extends Component {
     handleChange(event) {
         console.log(event.target.value);
         this.setState({value: event.target.value}, () => {
+            this.cleanupStreams();
             this.loadHistoricalData();
         });
     }
@@ -35,10 +36,6 @@ class App extends Component {
     handleSubmit(event) {
         alert('Your dataset right now is: ' + "/sample_link_" + this.state.value + ".csv");
         event.preventDefault();
-    }
-
-    onCommentRecieved(comment) {
-        this.setState({comments: this.state.comments.concat([comment.data])});
     }
 
     componentWillUnmount() {
@@ -87,6 +84,14 @@ class App extends Component {
                     submissionStream: submissionStream,
                     commentStream: commentStream
                 });
+
+                let cDist = {
+                    "positive": 0,
+                    "negative": 0,
+                    "neutral": 0
+                }
+                commentData.forEach(c => cDist[c.sentimentType] += 1);
+                console.log(cDist);
             });
         });
     }
@@ -119,11 +124,17 @@ class App extends Component {
 
     cleanupStreams() {
         // close event sources
-        this.state.commentEventSource.close();
-        this.state.submissionEventSource.close();
+        if (this.state.commentEventSource) {
+            this.state.commentEventSource.close();
+        }
+        if (this.state.submissionEventSource) {
+            this.state.submissionEventSource.close();
+        }
         // close streams
         this.state.submissionStream.push(null);
+        this.state.submissionStream.destroy();
         this.state.commentStream.push(null);
+        this.state.commentStream.destroy();
     }
 
     toggleLive(toggleValue, event) {
@@ -140,7 +151,7 @@ class App extends Component {
     }
 
     render() {
-        key += 1
+        key += 1;
         return (
             <>
             <h1> Reddit Flow </h1>
@@ -155,6 +166,14 @@ class App extends Component {
                 </label>
                 <input type="submit" value="Submit" />
             </form>
+            <div className="d-flex justify-content-center">
+                <ButtonToolbar>
+                    <ToggleButtonGroup type="radio" name="options" defaultValue={0} onChange={this.toggleLive}>
+                        <ToggleButton variant="success" value={0}>Historical Data</ToggleButton>
+                        <ToggleButton variant="danger" value={1}>Live</ToggleButton>
+                    </ToggleButtonGroup>
+                </ButtonToolbar>
+            </div>
             <div>
                 {this.state.commentStream && this.state.submissionStream?
                         <>
@@ -171,14 +190,6 @@ class App extends Component {
                         <p> Loading... </p>
                 }
                     </div>
-            <div className="d-flex justify-content-center">
-                <ButtonToolbar>
-                    <ToggleButtonGroup type="radio" name="options" defaultValue={0} onChange={this.toggleLive}>
-                        <ToggleButton value={0}>Historical Data</ToggleButton>
-                        <ToggleButton value={1}>Live</ToggleButton>
-                    </ToggleButtonGroup>
-                </ButtonToolbar>
-            </div>
             </>
         )
     }

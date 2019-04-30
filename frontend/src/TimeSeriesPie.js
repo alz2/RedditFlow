@@ -19,25 +19,36 @@ class TimeSeriesPie extends Component {
             chart: null
         };
 
+        this.onCommentRecieve.bind(this);
+        this.onSubmissionRecieve.bind(this);
+
         // set up initial submissions and comments if any
         let rowSubmissionStream = props.submissions;
         if (rowSubmissionStream) {
             //initialSubmissions.forEach(s => this.onSubmissionRecieve(s));
             rowSubmissionStream.on('data', s => this.onSubmissionRecieve(s));
+            this.state.submissionStream = rowSubmissionStream;
             //rowSubmissionStream.onmessage = s => this.onSubmissionRecieve(s);
         }
         let commentStream = props.comments;
         if (commentStream) {
+            console.log(commentStream);
             //commentStream.forEach(c => this.onCommentRecieve(c));
             commentStream.on('data', c => this.onCommentRecieve(c));
+            this.state.commentStream = commentStream;
             //commentStream.onmessage = c => this.onCommentRecieve(c);
         }
+
+        // set refresh logic
+        let intervalMs = 5000;
+        setInterval(this.refreshUpvotes.bind(this), intervalMs);
     }
 
     onSubmissionRecieve(submission) {
         if (submission.postId in this.state.postState) { // make sure to not duplicate submissions
             return;
         }
+
 
         // possibly scale upvotes to change bubble sizes better?
         let upvoteScaleFactor = 1;
@@ -88,10 +99,33 @@ class TimeSeriesPie extends Component {
             postTitle: submission.postTitle,
             postAuthor: submission.postAuthor,
             upvotes: submission.score,
-            postText : []
+            postText : [],
+            count_comment : 1
+
         }
 
+        console.log(this.state.postState);
         this.forceUpdate();
+    }
+
+    refreshUpvotes() {
+        let ids = Object.keys(this.state.postState);
+        if (!ids.length) {
+            return;
+        }
+        let qString = ids.map(id => "postId="+id).join('&');
+        // make request for updated upvotes for current post
+        fetch('http://localhost:8080/upvotes?' + qString)
+            .then(response => response.json())
+            .then(json => {
+                let newUpvotes = json.data;
+                newUpvotes.forEach(s => {
+                    this.state.postState[s.postId].positive.upvotes = s.score;
+                    this.state.postState[s.postId].neutral.upvotes = s.score;
+                    this.state.postState[s.postId].negative.upvotes = s.score;
+                });
+                this.forceUpdate();
+            });
     }
 
     onCommentRecieve(comment) {
@@ -99,13 +133,24 @@ class TimeSeriesPie extends Component {
         if (!(postId in this.state.postState)){ // check if has seen post
             return;
         }
-        this.state.postState[postId][comment.sentimentType].sentimentCount += 1;
-        let link_date = this.state.idToTime[comment.postId];
 
-        // console.log(this.state.idToTime[comment.postId])
-        this.state.postTimeToInfo[link_date].postText.push(comment.text);
-        // console.log(comment.text)
+        console.log("COMMENT");
+        console.log(comment);
+        this.state.postState[postId][comment.sentimentType].sentimentCount += 1;
+        console.log(this.state.postState[postId]);
+
+        let link_date = this.state.idToTime[comment.postId];
+        if (this.state.postTimeToInfo[link_date].count_comment < 10){
+            this.state.postTimeToInfo[link_date].postText.push(comment.text);
+        }
+        this.state.postTimeToInfo[link_date].count_comment += 1;
         this.forceUpdate();
+    }
+
+    alignTimeAxis() {
+        // get all outer g tags
+        let gs = [].slice.call(document.getElementsByTagName('g')).filter(g => g.parentNode.tagName == "svg");
+        gs.forEach(g => g.style.cssText = "transform: translate(0%, -45%)");
     }
 
     componentDidMount() {
@@ -113,18 +158,20 @@ class TimeSeriesPie extends Component {
             this.state.chart = this.createChart();
         } 
         this.state.chart.draw();
+        this.alignTimeAxis()
     }
+
     componentDidUpdate() {
         if (!this.state.chart) {
             this.state.chart = this.createChart();
         } 
         this.state.chart.draw();
-        //console.log(this.state.postState);
+        this.alignTimeAxis();
     }
 
     createChart() {
         let svgWidth = "100%";
-        let svgHeight = 500;
+        let svgHeight = 150;
         let svg = d3.select(this.node)
             .append("svg")
             .attr("width", svgWidth)
@@ -153,7 +200,9 @@ class TimeSeriesPie extends Component {
 
         chart.addMeasureAxis("p", "sentimentCount"); // attribute for slice
         let z = chart.addLogAxis("z", "upvotes"); // pie radius
-        z.logBase = 2;
+        z.logBase = 10;
+        z.overrideMin = 0;
+        z.overrideMax = 5000;
 
         let pies = chart.addSeries("sentimentType", dimple.plot.pie); // pie over sentimentType
         pies.radius = 50;
@@ -179,6 +228,11 @@ class TimeSeriesPie extends Component {
 
         //chart.draw();
         return chart;
+    }
+
+    componentWillUnmount() {
+        this.state.commentStream.destroy();
+        this.state.submissionStream.destroy();
     }
 
     render() {
