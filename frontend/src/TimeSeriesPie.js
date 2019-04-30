@@ -184,8 +184,11 @@ class TimeSeriesPie extends Component {
         y.hidden = true; // hide dummy axis
 
         chart.addMeasureAxis("p", "sentimentCount"); // attribute for slice
+        //let z = chart.addLogAxis("z", "upvotes"); // pie radius
         let z = chart.addLogAxis("z", "upvotes"); // pie radius
-        z.logBase = 2;
+        z.logBase = 10;
+        z.overrideMin = 0;
+        z.overrideMax = 5000;
 
         let pies = chart.addSeries("sentimentType", dimple.plot.pie); // pie over sentimentType
         pies.radius = 50;
@@ -208,6 +211,9 @@ class TimeSeriesPie extends Component {
                 onMouseOver(e, postTitle, postAuthor,postText);
             });
         }
+
+        //chart.setBounds(80, "50px", "100%", "50%"); Gave up on this
+
 
         //chart.draw();
         return chart;
