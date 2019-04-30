@@ -16,10 +16,22 @@ class App extends Component {
             comments: [],
             commentStream: null,
             submissionStream: null,
+            value: "UIUC",
             streaming: false,
         };
         this.toggleLive = this.toggleLive.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
         this.loadHistoricalData();
+    }
+
+    handleChange(event) {
+      this.setState({value: event.target.value});
+    }
+
+    handleSubmit(event) {
+      alert('Your dataset right now is: ' + "/sample_link_" + this.state.value + ".csv");
+      event.preventDefault();
     }
 
     onCommentRecieved(comment) {
@@ -44,8 +56,9 @@ class App extends Component {
     };
 
     loadHistoricalData() {
-        let submissionFile = "/sample_link_UIUC.csv";
-        let commentFile = "/sample_comm_UIUC.csv";
+        let tempname = this.state.value;
+        let submissionFile = "/sample_link_" + this.state.value + ".csv";
+        let commentFile = "/sample_comm_" + this.state.value + ".csv";
         d3.csv(submissionFile, submissionData => {
             d3.csv(commentFile, commentData => {
                 submissionData.map(s => s.postDate *= 1000) ; // convert to millis
@@ -123,8 +136,19 @@ class App extends Component {
         return (
             <>
             <h1> Reddit Flow </h1>
+            <form onSubmit={this.handleSubmit}>
+            <label>
+              Pick a Subreddit:
+              <select value={this.state.value} onChange= {this.handleChange}>
+                <option value="UIUC">UIUC</option>
+                <option value="uwaterloo">uwaterloo</option>
+                <option value="redditdev">redditdev</option>
+              </select>
+            </label>
+            <input type="submit" value="Submit" />
+            </form>
             <div>
-                {this.state.commentStream && this.state.submissionStream? 
+                {this.state.commentStream && this.state.submissionStream?
                     <>
                     <h4>{this.state.streaming ? "Live Data": "Historical Data"} </h4>
                     <RedditDayFlow
