@@ -10,7 +10,7 @@ import TimeSeriesPie from './TimeSeriesPie.js';
 class PostsPerLine extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: '10'};
+    this.state = {value: '20'};
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
