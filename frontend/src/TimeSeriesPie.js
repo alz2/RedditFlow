@@ -33,6 +33,10 @@ class TimeSeriesPie extends Component {
             //commentStream.onmessage = c => this.onCommentRecieve(c);
             console.log(commentStream);
         }
+
+        // set refresh logic
+        let intervalMs = 5000;
+        setInterval(this.refreshUpvotes.bind(this), intervalMs);
     }
 
     onSubmissionRecieve(submission) {
@@ -95,19 +99,37 @@ class TimeSeriesPie extends Component {
         this.forceUpdate();
     }
 
+    refreshUpvotes() {
+        let ids = Object.keys(this.state.postState);
+        if (!ids.length) {
+            return;
+        }
+        let qString = ids.map(id => "postId="+id).join('&');
+        // make request for updated upvotes for current post
+        fetch('http://localhost:8080/upvotes?' + qString)
+            .then(response => response.json())
+            .then(json => {
+                let newUpvotes = json.data;
+                newUpvotes.forEach(s => {
+                    this.state.postState[s.postId].positive.upvotes = s.score;
+                    this.state.postState[s.postId].neutral.upvotes = s.score;
+                    this.state.postState[s.postId].negative.upvotes = s.score;
+                });
+                this.forceUpdate();
+            });
+    }
+
     onCommentRecieve(comment) {
         let postId = comment.postId;
         if (!(postId in this.state.postState)){ // check if has seen post
             return;
         }
         this.state.postState[postId][comment.sentimentType].sentimentCount += 1;
+
         let link_date = this.state.idToTime[comment.postId];
-
-        // console.log(this.state.idToTime[comment.postId])
         this.state.postTimeToInfo[link_date].postText.push(comment.text);
-        // console.log(comment.text)
-        this.forceUpdate();
 
+        this.forceUpdate();
     }
 
     componentDidMount() {

@@ -119,7 +119,7 @@ class App extends Component {
     }
 
     render() {
-        key += 1
+        key += 1;
         return (
             <>
             <h1> Reddit Flow </h1>
