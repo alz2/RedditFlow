@@ -26,13 +26,15 @@ class App extends Component {
     }
 
     handleChange(event) {
-      this.setState({value: event.target.value});
-      this.loadHistoricalData();
+        console.log(event.target.value);
+        this.setState({value: event.target.value}, () => {
+            this.loadHistoricalData();
+        });
     }
 
     handleSubmit(event) {
-      alert('Your dataset right now is: ' + "/sample_link_" + this.state.value + ".csv");
-      event.preventDefault();
+        alert('Your dataset right now is: ' + "/sample_link_" + this.state.value + ".csv");
+        event.preventDefault();
     }
 
     onCommentRecieved(comment) {
@@ -59,6 +61,8 @@ class App extends Component {
     loadHistoricalData() {
         let submissionFile = "/sample_link_" + this.state.value + ".csv";
         let commentFile = "/sample_comm_" + this.state.value + ".csv";
+        console.log(submissionFile);
+        console.log(commentFile);
         // let submissionFile = "/sample_link_UIUC.csv";
         // let commentFile = "/sample_comm_UIUC.csv";
         d3.csv(submissionFile, submissionData => {
@@ -139,32 +143,32 @@ class App extends Component {
             <>
             <h1> Reddit Flow </h1>
             <form onSubmit={this.handleSubmit}>
-            <label>
-              Pick a Subreddit:
-              <select value={this.state.value} onChange= {this.handleChange}>
-                <option value="UIUC">UIUC</option>
-                <option value="uwaterloo">uwaterloo</option>
-                <option value="redditdev">redditdev</option>
-              </select>
-            </label>
-            <input type="submit" value="Submit" />
+                <label>
+                    Pick a Subreddit:
+                    <select onChange= {this.handleChange}>
+                        <option value="UIUC">UIUC</option>
+                        <option value="uwaterloo">uwaterloo</option>
+                        <option value="redditdev">redditdev</option>
+                    </select>
+                </label>
+                <input type="submit" value="Submit" />
             </form>
             <div>
                 {this.state.commentStream && this.state.submissionStream?
-                    <>
-                    <h4>{this.state.streaming ? "Live Data": "Historical Data"} </h4>
-                    <RedditDayFlow
-                        key={key}
-                        submissions={this.state.submissionStream}
-                        comments={this.state.commentStream}
-                        nRows={4}
-                        date={this.state.streaming ? Date.now() : new Date(2019, 3, 27)}
-                    />
-                    </>
-                    :
-                    <p> Loading... </p>
+                        <>
+                        <h4>{this.state.streaming ? "Live Data": "Historical Data"} </h4>
+                        <RedditDayFlow
+                            key={key}
+                            submissions={this.state.submissionStream}
+                            comments={this.state.commentStream}
+                            nRows={4}
+                            date={this.state.streaming ? Date.now() : new Date(2019, 3, 27)}
+                        />
+                        </>
+                        :
+                        <p> Loading... </p>
                 }
-            </div>
+                    </div>
             <div className="d-flex justify-content-center">
                 <ButtonToolbar>
                     <ToggleButtonGroup type="radio" name="options" defaultValue={0} onChange={this.toggleLive}>

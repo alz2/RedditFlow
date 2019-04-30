@@ -107,7 +107,6 @@ class TimeSeriesPie extends Component {
         this.state.postTimeToInfo[link_date].postText.push(comment.text);
         // console.log(comment.text)
         this.forceUpdate();
-
     }
 
     componentDidMount() {
@@ -121,6 +120,7 @@ class TimeSeriesPie extends Component {
             this.state.chart = this.createChart();
         } 
         this.state.chart.draw();
+        console.log(this.state.postState);
     }
 
     createChart() {
