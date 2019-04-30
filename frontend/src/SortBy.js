@@ -4,6 +4,7 @@ import dimple from 'dimple-js/dist/dimple.latest.js';
 import * as d3 from 'd3';
 import { startOfDay } from 'date-fns';
 import './App.css';
+import "./btn.css";
 
 import TimeSeriesPie from './TimeSeriesPie.js';
 
@@ -37,7 +38,7 @@ class SortBy extends React.Component {
             <option value="Time">Time</option>
           </select>
         </label>
-        <Button variant="info" onClick={this.handleSubmit}>Submit</Button>
+        <Button className="Btn-Y-BG" onClick={this.handleSubmit}>Submit</Button>
       </form>
     );
   }
