@@ -122,7 +122,6 @@ class App extends Component {
         key += 1
         return (
             <>
-            <h1> Reddit Flow </h1>
             <div>
                 {this.state.commentStream && this.state.submissionStream? 
                     <>
@@ -142,8 +141,8 @@ class App extends Component {
             <div className="d-flex justify-content-center">
                 <ButtonToolbar>
                     <ToggleButtonGroup type="radio" name="options" defaultValue={0} onChange={this.toggleLive}>
-                        <ToggleButton value={0}>Historical Data</ToggleButton>
-                        <ToggleButton value={1}>Live</ToggleButton>
+                        <ToggleButton variant="success" value={0}>Historical Data</ToggleButton>
+                        <ToggleButton variant="danger" value={1}>Live</ToggleButton>
                     </ToggleButtonGroup>
                 </ButtonToolbar>
             </div>
