@@ -20,9 +20,6 @@ ReactDOM.render(
         crossorigin="anonymous"
     />
     <AppName />
-	
-	<SortBy />
-	<PostsPerLine />
     <App />
     </>, document.getElementById('root'));
 

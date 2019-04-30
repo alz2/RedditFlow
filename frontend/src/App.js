@@ -175,7 +175,6 @@ class App extends Component {
         key += 1;
         return (
             <>
-            <h1> Reddit Flow </h1>
             <div>
                 { ! this.state.streaming && 
                         <form onSubmit={this.handleSubmit}>

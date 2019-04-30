@@ -136,8 +136,8 @@ class RedditDayFlow extends Component {
                     {this.state.currentSubmissionHoverInfo &&
                         <>
                             <h1>{this.state.currentSubmissionHoverInfo.postTitle}</h1>
-                            <h4>{this.state.currentSubmissionHoverInfo.postAuthor}</h4>
-                            <h4>{this.state.currentSubmissionHoverInfo.upvotes}</h4>
+                            <h4>{"u/"+this.state.currentSubmissionHoverInfo.postAuthor}</h4>
+                            <h4>{"upvotes: " + this.state.currentSubmissionHoverInfo.upvotes}</h4>
                         <details>   <summary> Comments </summary>
                             {this.state.currentSubmissionHoverInfo.postText}
                         </details>                        
