@@ -16,10 +16,18 @@ class App extends Component {
             comments: [],
             commentStream: null,
             submissionStream: null,
+            value: "aggies",
             streaming: false,
         };
         this.toggleLive = this.toggleLive.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.loadHistoricalData();
+    }
+
+    handleChange(event) {
+        this.loadHistoricalData();
+        this.setState({value: event.target.value});
+        event.preventDefault();
     }
 
     onCommentRecieved(comment) {
@@ -44,8 +52,10 @@ class App extends Component {
     };
 
     loadHistoricalData() {
-        let submissionFile = "/sample_link_UIUC.csv";
-        let commentFile = "/sample_comm_UIUC.csv";
+        // let submissionFile = "/sample_link_UIUC.csv";
+        // let commentFile = "/sample_comm_UIUC.csv";
+        let submissionFile = "/sample_link_" + this.state.value + ".csv";
+        let commentFile = "/sample_comm_" + this.state.value + ".csv";
         d3.csv(submissionFile, submissionData => {
             d3.csv(commentFile, commentData => {
                 submissionData.map(s => s.postDate *= 1000) ; // convert to millis
@@ -130,8 +140,17 @@ class App extends Component {
                     </ToggleButtonGroup>
                 </ButtonToolbar>
             </div>
+            <label>
+            Pick a Subreddit:
+              <select value={this.state.value} onChange= {this.handleChange}>
+                <option value="UIUC">aggies</option>
+                <option value="uwaterloo">UIUC</option>
+                <option value="nyu">uwaterloo</option>
+                <option value="aggies">nyu</option>
+              </select>
+            </label>
             <div>
-                {this.state.commentStream && this.state.submissionStream? 
+                {this.state.commentStream && this.state.submissionStream?
                     <>
                     <RedditDayFlow
                         key={key}
@@ -145,7 +164,7 @@ class App extends Component {
                     <p> Loading... </p>
                 }
             </div>
-            
+
             </>
         )
     }
