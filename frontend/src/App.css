@@ -28,6 +28,8 @@
 }
 
 .RedditDayFlow_hover {
+    padding-left: 1200px;
+    position: fixed;
     flex: 1;
 }
 

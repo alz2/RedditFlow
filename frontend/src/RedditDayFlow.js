@@ -57,7 +57,7 @@ class RedditDayFlow extends Component {
         console.log(s);
         // determine whether to keep submission
         if (s.postDate < this.state.dayBegin || s.postDate >= this.state.dayEnd) {
-            return; 
+            return;
         }
         for (let i = 0; i < this.state.nRows; i++) {
             if (s.postDate >= this.state.rowTimes[i].beginTime && s.postDate < this.state.rowTimes[i].endTime) {
@@ -95,7 +95,7 @@ class RedditDayFlow extends Component {
             rows.push(
                 <TimeSeriesPie
                     key={i}
-                    submissions={this.state.rowData[i].submissions} 
+                    submissions={this.state.rowData[i].submissions}
                     comments={this.state.rowData[i].comments}
                     beginTime={this.state.rowTimes[i].beginTime}
                     endTime={this.state.rowTimes[i].endTime}
@@ -110,7 +110,7 @@ class RedditDayFlow extends Component {
             <>
             <h1>{"" + new Date(this.state.dayBegin)}</h1>
             <div style={{display: "flex"}}>
-                <div className="RedditDayFlow_chart"> 
+                <div className="RedditDayFlow_chart">
                     {this.createTimeSeriesPieRows()}
                 </div>
                 <div className="RedditDayFlow_hover">
@@ -120,7 +120,7 @@ class RedditDayFlow extends Component {
                             <h4>{this.state.currentSubmissionHoverInfo.postAuthor}</h4>
                             <h4>{this.state.currentSubmissionHoverInfo.upvotes}</h4>
                         <details>  {this.state.currentSubmissionHoverInfo.postText[0]}
-                        </details>                        
+                        </details>
                         </>
                     }
                 </div>

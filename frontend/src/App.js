@@ -56,9 +56,10 @@ class App extends Component {
     };
 
     loadHistoricalData() {
-        let tempname = this.state.value;
         let submissionFile = "/sample_link_" + this.state.value + ".csv";
         let commentFile = "/sample_comm_" + this.state.value + ".csv";
+        // let submissionFile = "/sample_link_UIUC.csv";
+        // let commentFile = "/sample_comm_UIUC.csv";
         d3.csv(submissionFile, submissionData => {
             d3.csv(commentFile, commentData => {
                 submissionData.map(s => s.postDate *= 1000) ; // convert to millis
